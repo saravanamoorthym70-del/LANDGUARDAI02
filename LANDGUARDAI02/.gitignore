@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+ml/dataset/*.csv
+!ml/dataset/.gitkeep
+.env
+*.env
+.venv/
