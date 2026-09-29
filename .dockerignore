@@ -1,0 +1,16 @@
+.git
+**/.git
+**/.venv
+**/venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.serena
+**/node_modules
+**/dist
+**/.env
+**/*.env
+LANDGUARDAI04/backend/data/
+LANDGUARDAI04/ml/dataset/
+!LANDGUARDAI04/ml/dataset/
+!LANDGUARDAI04/ml/dataset/INDIA_TARGET_REGIONS_landslides.csv

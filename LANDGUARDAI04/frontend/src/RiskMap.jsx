@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   MapContainer,
@@ -8,11 +8,15 @@ import {
   Popup,
   useMapEvents,
 } from "react-leaflet";
-import { Satellite, MapPin, Loader2, MousePointerClick } from "lucide-react";
+import {
+  Satellite,
+  MapPin,
+  Loader2,
+  MousePointerClick,
+  RefreshCw,
+} from "lucide-react";
 
 import "leaflet/dist/leaflet.css";
-
-import landslideData from "./landslideData.json";
 
 // ============================================================
 // MAP CLICK HANDLER
@@ -83,13 +87,7 @@ function HistoricalMarker({ item }) {
     return null;
   }
 
-  const risk =
-    item.risk_level ??
-    item.riskLevel ??
-    item.risk ??
-    "LOW";
-
-  const color = getRiskColor(risk);
+  const color = "#c44d56";
 
   return (
     <CircleMarker
@@ -111,17 +109,17 @@ function HistoricalMarker({ item }) {
 
           <strong className="popup-title">
             <Satellite size={13} />
-            Historical landslide
+            Historical event
           </strong>
 
           <hr />
 
-          <div>
-            <b>Risk:</b>{" "}
-            <span style={{ color }}>
-              {String(risk).toUpperCase()}
-            </span>
-          </div>
+          {(item.event_title ?? item.title ?? item.location) && (
+            <div>
+              <b>Event:</b>{" "}
+              {item.event_title ?? item.title ?? item.location}
+            </div>
+          )}
 
           {(item.date ?? item.event_date) && (
             <div>
@@ -165,6 +163,64 @@ function HistoricalMarker({ item }) {
 
         </div>
 
+      </Popup>
+    </CircleMarker>
+  );
+}
+
+function AssessmentMarker({ item }) {
+  const latitude = Number(item.latitude);
+  const longitude = Number(item.longitude);
+
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return null;
+  }
+
+  const risk = item.risk_level ?? "UNKNOWN";
+  const color = getRiskColor(risk);
+  const capturedAt = item.captured_at ?? item.client_captured_at;
+
+  return (
+    <CircleMarker
+      center={[latitude, longitude]}
+      radius={7}
+      pathOptions={{
+        color: "#ffffff",
+        fillColor: color,
+        fillOpacity: 0.95,
+        weight: 2,
+      }}
+    >
+      <Popup>
+        <div className="historical-popup">
+          <strong className="popup-title">
+            <MapPin size={13} />
+            Saved AI assessment
+          </strong>
+          <hr />
+          <div>
+            <b>Screening level:</b>{" "}
+            <span style={{ color }}>{String(risk).toUpperCase()}</span>
+          </div>
+          {Number.isFinite(Number(item.risk_percentage)) && (
+            <div>
+              <b>Screening score:</b> {Number(item.risk_percentage).toFixed(1)}%
+            </div>
+          )}
+          {item.location_name && (
+            <div>
+              <b>Location:</b> {item.location_name}
+            </div>
+          )}
+          {capturedAt && (
+            <div>
+              <b>Assessed:</b> {capturedAt}
+            </div>
+          )}
+          <hr />
+          <div><b>Latitude:</b> {latitude.toFixed(4)}</div>
+          <div><b>Longitude:</b> {longitude.toFixed(4)}</div>
+        </div>
       </Popup>
     </CircleMarker>
   );
@@ -312,13 +368,31 @@ function LiveLocationMarker({
 // MAP LEGEND
 // ============================================================
 
-function MapLegend() {
+function MapLegend({ historyCount, assessmentCount, historyError }) {
   return (
     <div className="map-legend">
 
       <div className="map-legend-title">
-        Landslide risk
+        Map data
       </div>
+
+      <div className="legend-item">
+        <span className="legend-dot historic" />
+        <span>{historyCount} historical events</span>
+      </div>
+
+      <div className="legend-item">
+        <span className="legend-dot assessment" />
+        <span>{assessmentCount} saved assessments</span>
+      </div>
+
+      {historyError && (
+        <div className="legend-info">Historical catalog unavailable</div>
+      )}
+
+      <div className="legend-divider" />
+
+      <div className="map-legend-title">Assessment level</div>
 
       <div className="legend-item">
 
@@ -368,7 +442,43 @@ function MapLegend() {
 export default function RiskMap({
   onLocationClick,
   liveRisk,
+  records = [],
+  apiBaseUrl,
 }) {
+  const [historicalEvents, setHistoricalEvents] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [historyError, setHistoryError] = useState(false);
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadHistoricalEvents() {
+      setHistoryLoading(true);
+      setHistoryError(false);
+      try {
+        const response = await fetch(`${apiBaseUrl}/historical-events`);
+        if (!response.ok) {
+          throw new Error(`Historical events request failed (${response.status})`);
+        }
+        const data = await response.json();
+        if (!cancelled) {
+          setHistoricalEvents(Array.isArray(data.events) ? data.events : []);
+        }
+      } catch (error) {
+        console.warn("Historical event catalog could not be loaded:", error);
+        if (!cancelled) setHistoryError(true);
+      } finally {
+        if (!cancelled) setHistoryLoading(false);
+      }
+    }
+
+    loadHistoricalEvents();
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl, historyRefreshKey]);
+
   // ==========================================================
   // LIVE LOCATION
   // ==========================================================
@@ -420,12 +530,7 @@ export default function RiskMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* ====================================================
-            HISTORICAL NASA LANDSLIDE DATA
-        ==================================================== */}
-
-        {Array.isArray(landslideData) &&
-          landslideData.map(
+        {historicalEvents.map(
             (item, index) => (
               <HistoricalMarker
                 key={
@@ -437,6 +542,13 @@ export default function RiskMap({
               />
             )
           )}
+
+        {records.map((item, index) => (
+          <AssessmentMarker
+            key={item.id ?? item.correlation_id ?? `${item.latitude}-${item.longitude}-${index}`}
+            item={item}
+          />
+        ))}
 
         {/* ====================================================
             LIVE AI LOCATION
@@ -469,7 +581,23 @@ export default function RiskMap({
           MAP LEGEND
       ====================================================== */}
 
-      <MapLegend />
+      <button
+        type="button"
+        className="map-history-refresh"
+        onClick={() => setHistoryRefreshKey((key) => key + 1)}
+        disabled={historyLoading}
+        title="Refresh historical event points"
+        aria-label="Refresh historical event points"
+      >
+        <RefreshCw size={15} className={historyLoading ? "spin" : ""} />
+        <span>{historyLoading ? "Loading events" : "Refresh events"}</span>
+      </button>
+
+      <MapLegend
+        historyCount={historicalEvents.length}
+        assessmentCount={records.length}
+        historyError={historyError}
+      />
 
     </div>
   );

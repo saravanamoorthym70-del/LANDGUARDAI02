@@ -71,6 +71,8 @@ FEATURES = [
     "slope_deg",
 ]
 
+MODEL_FEATURES = FEATURES[:-1]
+
 TARGET_COLUMN = "risk"
 
 # ------------------------------------------------------------------

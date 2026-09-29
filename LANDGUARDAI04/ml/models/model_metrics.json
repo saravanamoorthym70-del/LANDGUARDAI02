@@ -1,12 +1,414 @@
 {
-  "accuracy": 0.9429824561403509,
-  "precision": 0.912621359223301,
-  "recall": 0.9591836734693877,
-  "f1": 0.9353233830845771,
-  "roc_auc": 0.984850863422292,
-  "warning_threshold": 0.32272925577281764,
-  "training_rows": 912,
-  "test_rows": 228,
-  "positive_rows": 491,
-  "negative_rows": 649
+  "selected_model": "hist_gradient_boosting",
+  "validation_method": "leave_one_state_out",
+  "validation_rows": 1365,
+  "state_count": 13,
+  "class_counts": {
+    "0": 975,
+    "1": 390
+  },
+  "threshold_for_metrics": 0.5,
+  "score_semantics": "screening score; not a calibrated event probability",
+  "models": {
+    "logistic_regression": {
+      "threshold": 0.5,
+      "accuracy": 0.6945054945054945,
+      "balanced_accuracy": 0.4930769230769231,
+      "precision": 0.2,
+      "recall": 0.023076923076923078,
+      "f1": 0.041379310344827586,
+      "roc_auc": 0.5529967126890204,
+      "average_precision": 0.3147945019029773,
+      "brier_score": 0.2069498956142863,
+      "false_positive_rate": 0.036923076923076927,
+      "true_negative": 939,
+      "false_positive": 36,
+      "false_negative": 381,
+      "true_positive": 9,
+      "held_out_states": [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Karnataka",
+        "Kerala",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura"
+      ],
+      "mean_state_balanced_accuracy": 0.504999925548706,
+      "mean_state_average_precision": 0.34128723770594294,
+      "per_state_metrics": {
+        "Andhra Pradesh": {
+          "rows": 96,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.37453432997293434
+        },
+        "Arunachal Pradesh": {
+          "rows": 95,
+          "balanced_accuracy": 0.48,
+          "average_precision": 0.2377336527205104
+        },
+        "Assam": {
+          "rows": 157,
+          "balanced_accuracy": 0.49829268292682927,
+          "average_precision": 0.5210488940008746
+        },
+        "Karnataka": {
+          "rows": 105,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.6513668025352545
+        },
+        "Kerala": {
+          "rows": 125,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.4926985029270538
+        },
+        "Manipur": {
+          "rows": 131,
+          "balanced_accuracy": 0.5089285714285714,
+          "average_precision": 0.5173225564303277
+        },
+        "Meghalaya": {
+          "rows": 93,
+          "balanced_accuracy": 0.47777777777777775,
+          "average_precision": 0.2060060914774826
+        },
+        "Mizoram": {
+          "rows": 102,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.2444751553554488
+        },
+        "Nagaland": {
+          "rows": 89,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.10408864130772286
+        },
+        "Sikkim": {
+          "rows": 106,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.5432588585972848
+        },
+        "Tamil Nadu": {
+          "rows": 112,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.4082797524931555
+        },
+        "Telangana": {
+          "rows": 76,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.0136986301369863
+        },
+        "Tripura": {
+          "rows": 78,
+          "balanced_accuracy": 0.6,
+          "average_precision": 0.12222222222222222
+        }
+      }
+    },
+    "random_forest": {
+      "threshold": 0.5,
+      "accuracy": 0.7194139194139194,
+      "balanced_accuracy": 0.588974358974359,
+      "precision": 0.5162790697674419,
+      "recall": 0.2846153846153846,
+      "f1": 0.3669421487603306,
+      "roc_auc": 0.659016436554898,
+      "average_precision": 0.4350970244718812,
+      "brier_score": 0.1953550598041474,
+      "false_positive_rate": 0.10666666666666667,
+      "true_negative": 871,
+      "false_positive": 104,
+      "false_negative": 279,
+      "true_positive": 111,
+      "held_out_states": [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Karnataka",
+        "Kerala",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura"
+      ],
+      "mean_state_balanced_accuracy": 0.5843059405451224,
+      "mean_state_average_precision": 0.4334356982608814,
+      "per_state_metrics": {
+        "Andhra Pradesh": {
+          "rows": 96,
+          "balanced_accuracy": 0.5352380952380953,
+          "average_precision": 0.27755086878005963
+        },
+        "Arunachal Pradesh": {
+          "rows": 95,
+          "balanced_accuracy": 0.625,
+          "average_precision": 0.43528577998144546
+        },
+        "Assam": {
+          "rows": 157,
+          "balanced_accuracy": 0.5219512195121951,
+          "average_precision": 0.6080812702524794
+        },
+        "Karnataka": {
+          "rows": 105,
+          "balanced_accuracy": 0.6133333333333333,
+          "average_precision": 0.4815162155161037
+        },
+        "Kerala": {
+          "rows": 125,
+          "balanced_accuracy": 0.6033333333333334,
+          "average_precision": 0.5484110075623928
+        },
+        "Manipur": {
+          "rows": 131,
+          "balanced_accuracy": 0.6073809523809524,
+          "average_precision": 0.5888725690931802
+        },
+        "Meghalaya": {
+          "rows": 93,
+          "balanced_accuracy": 0.731111111111111,
+          "average_precision": 0.49088083863280363
+        },
+        "Mizoram": {
+          "rows": 102,
+          "balanced_accuracy": 0.5303703703703704,
+          "average_precision": 0.5801611853562174
+        },
+        "Nagaland": {
+          "rows": 89,
+          "balanced_accuracy": 0.5804761904761905,
+          "average_precision": 0.37135391337041224
+        },
+        "Sikkim": {
+          "rows": 106,
+          "balanced_accuracy": 0.6735483870967742,
+          "average_precision": 0.6570505875790886
+        },
+        "Tamil Nadu": {
+          "rows": 112,
+          "balanced_accuracy": 0.5409009009009009,
+          "average_precision": 0.487380183147618
+        },
+        "Telangana": {
+          "rows": 76,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.014285714285714285
+        },
+        "Tripura": {
+          "rows": 78,
+          "balanced_accuracy": 0.5333333333333333,
+          "average_precision": 0.09383394383394383
+        }
+      }
+    },
+    "extra_trees": {
+      "threshold": 0.5,
+      "accuracy": 0.6893772893772894,
+      "balanced_accuracy": 0.4994871794871795,
+      "precision": 0.28205128205128205,
+      "recall": 0.05641025641025641,
+      "f1": 0.09401709401709402,
+      "roc_auc": 0.6402366863905326,
+      "average_precision": 0.3716119119767284,
+      "brier_score": 0.19630380693355612,
+      "false_positive_rate": 0.057435897435897436,
+      "true_negative": 919,
+      "false_positive": 56,
+      "false_negative": 368,
+      "true_positive": 22,
+      "held_out_states": [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Karnataka",
+        "Kerala",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura"
+      ],
+      "mean_state_balanced_accuracy": 0.5187677566336103,
+      "mean_state_average_precision": 0.42718222996124106,
+      "per_state_metrics": {
+        "Andhra Pradesh": {
+          "rows": 96,
+          "balanced_accuracy": 0.5238095238095238,
+          "average_precision": 0.40111815116223815
+        },
+        "Arunachal Pradesh": {
+          "rows": 95,
+          "balanced_accuracy": 0.61,
+          "average_precision": 0.37260515589509074
+        },
+        "Assam": {
+          "rows": 157,
+          "balanced_accuracy": 0.4588617886178862,
+          "average_precision": 0.5605361097809523
+        },
+        "Karnataka": {
+          "rows": 105,
+          "balanced_accuracy": 0.52,
+          "average_precision": 0.5012364498895729
+        },
+        "Kerala": {
+          "rows": 125,
+          "balanced_accuracy": 0.4466666666666667,
+          "average_precision": 0.43863947884729104
+        },
+        "Manipur": {
+          "rows": 131,
+          "balanced_accuracy": 0.5089285714285714,
+          "average_precision": 0.5021503894635533
+        },
+        "Meghalaya": {
+          "rows": 93,
+          "balanced_accuracy": 0.6,
+          "average_precision": 0.38563203662202683
+        },
+        "Mizoram": {
+          "rows": 102,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.6302480038120233
+        },
+        "Nagaland": {
+          "rows": 89,
+          "balanced_accuracy": 0.5357142857142857,
+          "average_precision": 0.37724518671919505
+        },
+        "Sikkim": {
+          "rows": 106,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.7364340157075675
+        },
+        "Tamil Nadu": {
+          "rows": 112,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.5383693848336364
+        },
+        "Telangana": {
+          "rows": 76,
+          "balanced_accuracy": 0.5,
+          "average_precision": 0.013157894736842105
+        },
+        "Tripura": {
+          "rows": 78,
+          "balanced_accuracy": 0.54,
+          "average_precision": 0.09599673202614378
+        }
+      }
+    },
+    "hist_gradient_boosting": {
+      "threshold": 0.5,
+      "accuracy": 0.7084249084249085,
+      "balanced_accuracy": 0.6012820512820513,
+      "precision": 0.4858156028368794,
+      "recall": 0.35128205128205126,
+      "f1": 0.40773809523809523,
+      "roc_auc": 0.6695884286653517,
+      "average_precision": 0.42835151785876346,
+      "brier_score": 0.19911908835506578,
+      "false_positive_rate": 0.14871794871794872,
+      "true_negative": 830,
+      "false_positive": 145,
+      "false_negative": 253,
+      "true_positive": 137,
+      "held_out_states": [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Karnataka",
+        "Kerala",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura"
+      ],
+      "mean_state_balanced_accuracy": 0.5913310897162195,
+      "mean_state_average_precision": 0.4341091917062269,
+      "per_state_metrics": {
+        "Andhra Pradesh": {
+          "rows": 96,
+          "balanced_accuracy": 0.539047619047619,
+          "average_precision": 0.32469439512722376
+        },
+        "Arunachal Pradesh": {
+          "rows": 95,
+          "balanced_accuracy": 0.6283333333333334,
+          "average_precision": 0.3889576278737514
+        },
+        "Assam": {
+          "rows": 157,
+          "balanced_accuracy": 0.571869918699187,
+          "average_precision": 0.61472994127534
+        },
+        "Karnataka": {
+          "rows": 105,
+          "balanced_accuracy": 0.6066666666666667,
+          "average_precision": 0.44057865333368096
+        },
+        "Kerala": {
+          "rows": 125,
+          "balanced_accuracy": 0.5633333333333334,
+          "average_precision": 0.516929812656016
+        },
+        "Manipur": {
+          "rows": 131,
+          "balanced_accuracy": 0.6053571428571429,
+          "average_precision": 0.5787565414436624
+        },
+        "Meghalaya": {
+          "rows": 93,
+          "balanced_accuracy": 0.7533333333333333,
+          "average_precision": 0.46827708138532786
+        },
+        "Mizoram": {
+          "rows": 102,
+          "balanced_accuracy": 0.554074074074074,
+          "average_precision": 0.5852111585237154
+        },
+        "Nagaland": {
+          "rows": 89,
+          "balanced_accuracy": 0.5738095238095238,
+          "average_precision": 0.35419768703587473
+        },
+        "Sikkim": {
+          "rows": 106,
+          "balanced_accuracy": 0.6963440860215054,
+          "average_precision": 0.6937973079519004
+        },
+        "Tamil Nadu": {
+          "rows": 112,
+          "balanced_accuracy": 0.5684684684684684,
+          "average_precision": 0.5042997999251246
+        },
+        "Telangana": {
+          "rows": 76,
+          "balanced_accuracy": 0.49333333333333335,
+          "average_precision": 0.014492753623188406
+        },
+        "Tripura": {
+          "rows": 78,
+          "balanced_accuracy": 0.5333333333333333,
+          "average_precision": 0.15849673202614378
+        }
+      }
+    }
+  }
 }

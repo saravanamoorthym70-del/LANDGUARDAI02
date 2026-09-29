@@ -375,21 +375,30 @@ export default function App() {
   async function handlePrediction(event) {
     event.preventDefault();
 
+    const payload = {
+      rainfall_1d_mm: Number(formData.rainfall_1d_mm),
+      rainfall_3d_mm: Number(formData.rainfall_3d_mm),
+      rainfall_7d_mm: Number(formData.rainfall_7d_mm),
+      soil_moisture_0_7cm: Number(
+        formData.soil_moisture_0_7cm
+      ),
+      elevation_m: Number(formData.elevation_m),
+      slope_deg: Number(formData.slope_deg),
+    };
+
+    if (
+      Object.values(formData).some((value) => value.trim() === "") ||
+      Object.values(payload).some((value) => !Number.isFinite(value))
+    ) {
+      setError("Enter a valid number in every field.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setPrediction(null);
 
     try {
-      const payload = {
-        rainfall_1d_mm: Number(formData.rainfall_1d_mm),
-        rainfall_3d_mm: Number(formData.rainfall_3d_mm),
-        rainfall_7d_mm: Number(formData.rainfall_7d_mm),
-        soil_moisture_0_7cm: Number(
-          formData.soil_moisture_0_7cm
-        ),
-        elevation_m: Number(formData.elevation_m),
-        slope_deg: Number(formData.slope_deg),
-      };
 
       const response = await fetch(
         `${API_BASE}/predict-risk`,
@@ -838,6 +847,8 @@ export default function App() {
           <RiskMap
             onLocationClick={handleMapClick}
             liveRisk={liveRisk}
+            records={liveRecords}
+            apiBaseUrl={API_BASE}
           />
 
         </section>
@@ -975,7 +986,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Risk score
+                    Model screening score
                   </span>
 
                 </div>
@@ -1380,6 +1391,39 @@ export default function App() {
               <div className="risk-factor-card">
 
                 <div className="factor-icon">
+                  <Mountain size={18} />
+                </div>
+
+                <div className="factor-content">
+
+                  <span>
+                    Elevation
+                  </span>
+
+                  <strong>
+                    {Number.isFinite(
+                      Number(liveEnvironment.elevation_m)
+                    )
+                      ? Number(
+                          liveEnvironment.elevation_m
+                        ).toFixed(0)
+                      : "N/A"}
+                    {Number.isFinite(
+                      Number(liveEnvironment.elevation_m)
+                    ) && " m"}
+                  </strong>
+
+                  <small>
+                    Above sea level
+                  </small>
+
+                </div>
+
+              </div>
+
+              <div className="risk-factor-card">
+
+                <div className="factor-icon">
                   <Droplets size={18} />
                 </div>
 
@@ -1457,9 +1501,9 @@ export default function App() {
               </h2>
 
               <p>
-                Enter environmental parameters to
-                calculate landslide risk using the
-                trained Random Forest model.
+                The screening model uses rainfall, soil moisture, and elevation.
+                Slope is contextual and is not used in its score. This is not a
+                calibrated event probability.
               </p>
             </div>
 
@@ -1479,8 +1523,8 @@ export default function App() {
                 </label>
 
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   name="rainfall_1d_mm"
                   value={
                     formData.rainfall_1d_mm
@@ -1499,8 +1543,8 @@ export default function App() {
                 </label>
 
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   name="rainfall_3d_mm"
                   value={
                     formData.rainfall_3d_mm
@@ -1519,8 +1563,8 @@ export default function App() {
                 </label>
 
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   name="rainfall_7d_mm"
                   value={
                     formData.rainfall_7d_mm
@@ -1539,8 +1583,8 @@ export default function App() {
                 </label>
 
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   name="soil_moisture_0_7cm"
                   value={
                     formData.soil_moisture_0_7cm
@@ -1555,18 +1599,18 @@ export default function App() {
               <div className="form-group">
 
                 <label>
-                  Elevation (m)
+                  Elevation above sea level (m)
                 </label>
 
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   name="elevation_m"
                   value={
                     formData.elevation_m
                   }
                   onChange={handleChange}
-                  placeholder="e.g. 1500"
+                  placeholder="e.g. 328"
                   required
                 />
 
@@ -1579,8 +1623,8 @@ export default function App() {
                 </label>
 
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   name="slope_deg"
                   value={
                     formData.slope_deg
@@ -1664,7 +1708,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Risk probability
+                    Model screening score
                   </span>
 
                 </div>
@@ -1787,7 +1831,6 @@ export default function App() {
           </div>
 
           <div className="footer-meta">
-            <span>SIH Problem Statement 26001</span>
             <span>Ministry of Development of North Eastern Region</span>
           </div>
 

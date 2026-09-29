@@ -16,6 +16,7 @@ Run:
 
 import os
 import sys
+import time
 
 import pandas as pd
 import requests
@@ -31,20 +32,27 @@ INPUT_CSV = os.path.join(
 )
 OUTPUT_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_terrain_data.csv")
 
-BATCH_SIZE = 100  # Open-Meteo accepts batched lat/lon lists per request
+BATCH_SIZE = 50  # Smaller batches reduce rate-limit pressure on the public API
 
 
 def fetch_elevations(latitudes, longitudes):
-    response = requests.get(
-        OPEN_METEO_ELEVATION_URL,
-        params={
-            "latitude": ",".join(map(str, latitudes)),
-            "longitude": ",".join(map(str, longitudes)),
-        },
-        timeout=REQUEST_TIMEOUT_SECONDS,
-    )
-    response.raise_for_status()
-    return response.json()["elevation"]
+    params = {
+        "latitude": ",".join(map(str, latitudes)),
+        "longitude": ",".join(map(str, longitudes)),
+    }
+    for attempt in range(4):
+        try:
+            response = requests.get(
+                OPEN_METEO_ELEVATION_URL,
+                params=params,
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+            response.raise_for_status()
+            return response.json()["elevation"]
+        except requests.RequestException:
+            if attempt == 3:
+                raise
+            time.sleep(2 ** (attempt + 1))
 
 
 def main():

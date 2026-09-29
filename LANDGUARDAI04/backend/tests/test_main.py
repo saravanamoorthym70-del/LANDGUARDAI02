@@ -45,6 +45,28 @@ def test_health():
     assert response.json()["status"] == "healthy"
 
 
+def test_historical_events_endpoint_reads_catalog(monkeypatch, tmp_path):
+    from backend import main
+
+    catalog = tmp_path / "events.csv"
+    catalog.write_text(
+        "event_id,event_date,event_title,location,latitude,longitude,state,landslide_category,landslide_trigger,landslide_size\n"
+        "42,2024-06-01,Test slide,Test ridge,25.5,91.5,Meghalaya,landslide,rain,small\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(main, "HISTORICAL_EVENTS_CSV", str(catalog))
+
+    response = client.get("/historical-events")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["count"] == 1
+    assert body["events"][0]["event_id"] == "42"
+    assert body["events"][0]["latitude"] == 25.5
+    assert body["events"][0]["trigger"] == "rain"
+    assert "risk_level" not in body["events"][0]
+
+
 def test_live_records_crud(monkeypatch, tmp_path):
     monkeypatch.setattr(record_store, "_database_path", lambda: tmp_path / "records.db")
     record_store.init_db()
@@ -379,3 +401,30 @@ def test_predict_risk_returns_alert_metadata():
     body = response.json()
     assert isinstance(body["alert_triggered"], bool)
     assert 0 <= body["alert_threshold_percentage"] <= 100
+
+
+def test_legacy_alert_threshold_cannot_trigger_below_high_band(monkeypatch):
+    from backend import ml_predictor
+
+    class FixedProbabilityModel:
+        def predict_proba(self, _features):
+            return [[0.35, 0.65]]
+
+    monkeypatch.setattr(
+        ml_predictor,
+        "model",
+        {"model": FixedProbabilityModel(), "warning_threshold": 0.3227},
+    )
+    result = ml_predictor.predict_risk(
+        rainfall_1d_mm=0.8,
+        rainfall_3d_mm=1.1,
+        rainfall_7d_mm=1.6,
+        soil_moisture_0_7cm=0.277,
+        elevation_m=328,
+        slope_deg=1.67,
+    )
+
+    assert result["risk_level"] == "MEDIUM"
+    assert result["alert_triggered"] is False
+    assert result["alert_threshold_percentage"] == 70.0
+    assert "not a calibrated event probability" in result["score_semantics"]

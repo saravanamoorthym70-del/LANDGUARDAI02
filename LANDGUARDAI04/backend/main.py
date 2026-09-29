@@ -1,3 +1,4 @@
+import csv
 import os
 
 from typing import Any
@@ -29,6 +30,13 @@ app = FastAPI(
 )
 
 init_db()
+
+HISTORICAL_EVENTS_CSV = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "ml",
+    "dataset",
+    "INDIA_TARGET_REGIONS_landslides.csv",
+)
 
 
 # ============================================================
@@ -118,6 +126,40 @@ def health():
 # ============================================================
 # LIVE RECORDS
 # ============================================================
+
+@app.get("/historical-events")
+def get_historical_events():
+    try:
+        with open(HISTORICAL_EVENTS_CSV, newline="", encoding="utf-8-sig") as catalog_file:
+            events = []
+            for row in csv.DictReader(catalog_file):
+                try:
+                    latitude = float(row["latitude"])
+                    longitude = float(row["longitude"])
+                except (KeyError, TypeError, ValueError):
+                    continue
+
+                events.append(
+                    {
+                        "event_id": row.get("event_id"),
+                        "event_date": row.get("event_date"),
+                        "event_title": row.get("event_title"),
+                        "location": row.get("location"),
+                        "latitude": latitude,
+                        "longitude": longitude,
+                        "state": row.get("state"),
+                        "category": row.get("landslide_category"),
+                        "trigger": row.get("landslide_trigger"),
+                        "size": row.get("landslide_size"),
+                    }
+                )
+    except OSError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Historical event catalog is unavailable.",
+        ) from exc
+
+    return {"events": events, "count": len(events)}
 
 @app.get("/records")
 def get_records(limit: int = Query(default=50, ge=1, le=200)):

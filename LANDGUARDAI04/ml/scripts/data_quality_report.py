@@ -7,7 +7,7 @@ summary. This does not silently delete rows; it reports anomalies for review.
 import json, os
 import numpy as np
 import pandas as pd
-from ml.scripts.common import DATASET_DIR, FEATURES
+from ml.scripts.common import DATASET_DIR, MODEL_FEATURES, TARGET_COLUMN
 
 FINAL = os.path.join(DATASET_DIR, 'LANDGUARD_FINAL_DATASET.csv')
 REPORT = os.path.join(DATASET_DIR, 'LANDGUARD_DATA_QUALITY_REPORT.json')
@@ -18,7 +18,6 @@ RANGES = {
     'rainfall_7d_mm': (0, 4000),
     'soil_moisture_0_7cm': (0, 1),
     'elevation_m': (-500, 9000),
-    'slope_deg': (0, 90),
 }
 
 def main():
@@ -27,6 +26,16 @@ def main():
     df = pd.read_csv(FINAL)
     report = {'file': FINAL, 'rows': int(len(df)), 'columns': list(df.columns), 'checks': {}}
     report['checks']['missing_values'] = {k: int(v) for k,v in df.isna().sum().items()}
+    required_columns = list(MODEL_FEATURES) + [TARGET_COLUMN]
+    report['checks']['required_missing_values'] = {
+        column: int(df[column].isna().sum()) for column in required_columns
+    }
+    if 'slope_deg' in df:
+        optional_slope = pd.to_numeric(df['slope_deg'], errors='coerce')
+        report['checks']['optional_slope_coverage'] = {
+            'available_rows': int(optional_slope.notna().sum()),
+            'missing_rows': int(optional_slope.isna().sum()),
+        }
     report['checks']['duplicates'] = int(df.duplicated().sum())
     report['checks']['class_counts'] = {str(k): int(v) for k,v in df['risk'].value_counts().sort_index().items()}
     report['checks']['feature_ranges'] = {}
@@ -42,7 +51,7 @@ def main():
         'r3_gt_r7_count': int((df.rainfall_3d_mm > df.rainfall_7d_mm + 1e-9).sum()),
     }
     report['checks']['quality_status'] = 'PASS' if all(
-        x == 0 for x in report['checks']['missing_values'].values()
+        x == 0 for x in report['checks']['required_missing_values'].values()
     ) and report['checks']['duplicates'] == 0 and all(
         v['out_of_range_count'] == 0 for v in report['checks']['feature_ranges'].values()
     ) and report['checks']['rainfall_consistency']['r1_gt_r3_count'] == 0 and report['checks']['rainfall_consistency']['r3_gt_r7_count'] == 0 else 'REVIEW'

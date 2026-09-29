@@ -18,6 +18,7 @@ Run:
 
 import os
 import sys
+import time
 
 import numpy as np
 import pandas as pd
@@ -43,17 +44,24 @@ def slope_for_point(latitude, longitude):
     latitudes = [latitude + dlat for dlat in lat_offsets for _ in lon_offsets]
     longitudes = [longitude + dlon for _ in lat_offsets for dlon in lon_offsets]
 
-    response = requests.get(
-        OPEN_METEO_ELEVATION_URL,
-        params={
-            "latitude": ",".join(map(str, latitudes)),
-            "longitude": ",".join(map(str, longitudes)),
-        },
-        timeout=REQUEST_TIMEOUT_SECONDS,
-    )
-    response.raise_for_status()
-
-    grid = np.array(response.json()["elevation"]).reshape(3, 3)
+    params = {
+        "latitude": ",".join(map(str, latitudes)),
+        "longitude": ",".join(map(str, longitudes)),
+    }
+    for attempt in range(4):
+        try:
+            response = requests.get(
+                OPEN_METEO_ELEVATION_URL,
+                params=params,
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+            response.raise_for_status()
+            grid = np.array(response.json()["elevation"]).reshape(3, 3)
+            break
+        except (requests.RequestException, KeyError, TypeError, ValueError):
+            if attempt == 3:
+                raise
+            time.sleep(2 ** (attempt + 1))
     gradient_y, gradient_x = np.gradient(grid, CELL_SIZE_M)
     slope_deg = np.degrees(
         np.arctan(np.sqrt(gradient_x**2 + gradient_y**2))

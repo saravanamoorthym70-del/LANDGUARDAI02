@@ -4,8 +4,8 @@ AI-based early warning and landslide risk monitoring for the North Eastern Regio
 
 ## What is improved in this version
 
-- Calibrated Random Forest model artifact with model metadata.
-- Recall-oriented alert threshold selected from out-of-fold training probabilities.
+- Four-model comparison with leave-one-state-out validation; the selected estimator is saved with per-state metrics.
+- Prototype screening score with alerts aligned to the HIGH band; scores are not calibrated event probabilities.
 - Stable LOW/MEDIUM/HIGH UI risk bands.
 - Data-quality audit script for missing values, duplicates, ranges and rainfall consistency.
 - Polygon-constrained background sampler — no unsafe bounding-box fallback.
@@ -19,13 +19,13 @@ AI-based early warning and landslide risk monitoring for the North Eastern Regio
 
 ## Current shipped data
 
-`ml/dataset/LANDGUARD_FINAL_DATASET.csv` contains 1,143 rows:
+`ml/dataset/LANDGUARD_FINAL_DATASET.csv` contains 1,365 rows with location and sample provenance:
 
-- 494 historical landslide observations (`risk=1`)
-- 649 background/pseudo-absence observations (`risk=0`)
-- 6 model features
+- 390 historical landslide observations (`risk=1`)
+- 975 background/pseudo-absence observations (`risk=0`)
+- 5 model features: rainfall windows, soil moisture, and elevation
 
-The shipped dataset is a prototype dataset. It has **not** been spatially cross-validated and the background class is not confirmed landslide absence.
+The dataset is a prototype. Background samples are not confirmed landslide absences. Held-out-state validation is informative but does not establish operational accuracy or a real-world landslide probability.
 
 ## Quick start
 
@@ -35,6 +35,7 @@ The shipped dataset is a prototype dataset. It has **not** been spatially cross-
 python -m venv .venv
 # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+python -m ml.scripts.combine_ml_dataset
 python -m ml.scripts.data_quality_report
 python -m ml.scripts.train_real_model
 uvicorn backend.main:app --reload
@@ -81,7 +82,6 @@ python -m ml.scripts.create_real_background_locations
 python -m ml.scripts.match_background_dates
 python -m ml.scripts.get_background_environmental_data
 python -m ml.scripts.get_background_elevation
-python -m ml.scripts.get_background_slope
 python -m ml.scripts.combine_ml_dataset
 python -m ml.scripts.data_quality_report
 python -m ml.scripts.train_real_model
@@ -112,9 +112,9 @@ Historical landslides + weather + soil + terrain
                     |
              ML training
                     |
-        calibrated Random Forest
+      held-out-state classifier
                     |
-             risk probability
+            screening score (not probability)
                     |
        LOW / MEDIUM / HIGH + alert
                     |

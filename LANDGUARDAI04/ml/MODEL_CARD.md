@@ -2,21 +2,22 @@
 
 ## Current model
 
-- Estimator: calibrated Random Forest (`CalibratedClassifierCV` + `RandomForestClassifier`)
-- Input features: rainfall 1d/3d/7d, surface soil moisture, elevation, slope
+- Current estimator: HistGradientBoosting, selected from Logistic Regression, Random Forest, Extra Trees, and HistGradientBoosting using held-out-state validation
+- Input features: rainfall 1d/3d/7d, surface soil moisture, elevation
+- Slope is displayed as contextual terrain information but is not used by the current estimator.
 - Training dataset shipped: `LANDGUARD_FINAL_DATASET.csv`
-- The shipped dataset contains 494 historical positive observations and 649 background/pseudo-absence observations.
+- The training dataset contains 390 historical positive observations and 975 background/pseudo-absence observations.
 
 ## Validation
 
-The training script creates a stratified 80/20 holdout and uses out-of-fold probabilities on the training partition to select a recall-oriented warning threshold. The test set is not used to tune that threshold.
+The training script compares four classifiers with leave-one-state-out validation. Every row from the held-out state is excluded from that fold's training set. The saved metrics include balanced accuracy, precision, recall, ROC AUC, average precision, Brier score, and false-positive rate at a 0.50 screening threshold.
 
-Important: the shipped dataset is still based on historical events plus pseudo-absence background samples. Random train/test validation can overestimate generalization when nearby locations are correlated. **Do not describe the current metrics as operational or spatially validated.** Run the improved polygon + date-matched pipeline and spatial/group validation before deployment.
+The labels distinguish historical landslide records from sampled background locations; the backgrounds are not verified landslide-free observations. The output is a **screening score, not a calibrated probability of a landslide at a specific place and time**. State-held-out results are a stronger check than random splitting, but do not establish operational performance or safety. Use verified event/non-event observations, temporal validation, and domain review before operational use.
 
 ## Risk bands
 
-- LOW: probability < 0.40
-- MEDIUM: 0.40–<0.70
-- HIGH: >= 0.70
+- LOW: screening score < 0.40
+- MEDIUM: screening score 0.40–<0.70
+- HIGH: screening score >= 0.70
 
-The model also stores a separate optimized `warning_threshold` for alerting. An alert threshold is not the same thing as the UI HIGH-risk band.
+The warning threshold is fixed at 0.70 to match the UI HIGH-risk band. It is a prototype screening threshold, not an emergency-warning standard.

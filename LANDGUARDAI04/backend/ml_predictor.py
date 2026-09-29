@@ -15,12 +15,12 @@ MODEL_PATH = os.path.join(
 
 FEATURES = [
     "rainfall_1d_mm", "rainfall_3d_mm", "rainfall_7d_mm",
-    "soil_moisture_0_7cm", "elevation_m", "slope_deg",
+    "soil_moisture_0_7cm", "elevation_m",
 ]
 
 LOW_THRESHOLD = 0.40
 HIGH_THRESHOLD = 0.70
-DEFAULT_ALERT_THRESHOLD = 0.50
+DEFAULT_ALERT_THRESHOLD = HIGH_THRESHOLD
 
 
 def _load_model():
@@ -60,12 +60,11 @@ def predict_risk(
             "rainfall_7d_mm": rainfall_7d_mm,
             "soil_moisture_0_7cm": soil_moisture_0_7cm,
             "elevation_m": elevation_m,
-            "slope_deg": slope_deg,
         }])[FEATURES]
 
         probability = float(estimator.predict_proba(data)[0][1])
-        # Risk bands remain stable UI categories. The optimized warning
-        # threshold is reported separately and is intended for alerting.
+        # Keep alerts consistent with the HIGH band, including older artifacts
+        # whose optimized threshold may be lower.
         if probability >= HIGH_THRESHOLD:
             risk_level = "HIGH"
         elif probability >= LOW_THRESHOLD:
@@ -73,7 +72,10 @@ def predict_risk(
         else:
             risk_level = "LOW"
 
-        alert_threshold = float(metadata.get("warning_threshold", DEFAULT_ALERT_THRESHOLD))
+        alert_threshold = max(
+            float(metadata.get("warning_threshold", DEFAULT_ALERT_THRESHOLD)),
+            HIGH_THRESHOLD,
+        )
         return {
             "risk_probability": round(probability, 4),
             "risk_percentage": round(probability * 100, 2),
@@ -82,6 +84,10 @@ def predict_risk(
             "alert_threshold_percentage": round(alert_threshold * 100, 2),
             "mode": "ml_model",
             "model_version": metadata.get("version", "unknown"),
+            "score_semantics": metadata.get(
+                "score_semantics",
+                "prototype screening score; not a calibrated event probability",
+            ),
         }
 
     fallback = calculate_risk(
@@ -99,4 +105,5 @@ def predict_risk(
         "alert_threshold_percentage": 70.0,
         "mode": "rule_based_fallback",
         "model_version": "fallback",
+        "score_semantics": "rule-based screening score; not an event probability",
     }

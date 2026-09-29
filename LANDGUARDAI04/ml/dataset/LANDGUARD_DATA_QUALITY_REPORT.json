@@ -1,14 +1,22 @@
 {
   "file": "C:\\Users\\Dell\\Downloads\\LANDGUARDAI04\\LANDGUARDAI04\\ml\\dataset\\LANDGUARD_FINAL_DATASET.csv",
-  "rows": 1140,
+  "rows": 1365,
   "columns": [
     "rainfall_1d_mm",
     "rainfall_3d_mm",
     "rainfall_7d_mm",
     "soil_moisture_0_7cm",
     "elevation_m",
-    "slope_deg",
-    "risk"
+    "risk",
+    "latitude",
+    "longitude",
+    "state",
+    "region",
+    "event_id",
+    "event_date",
+    "sample_date",
+    "sample_type",
+    "slope_deg"
   ],
   "checks": {
     "missing_values": {
@@ -17,19 +25,39 @@
       "rainfall_7d_mm": 0,
       "soil_moisture_0_7cm": 0,
       "elevation_m": 0,
-      "slope_deg": 0,
+      "risk": 0,
+      "latitude": 0,
+      "longitude": 0,
+      "state": 0,
+      "region": 0,
+      "event_id": 975,
+      "event_date": 975,
+      "sample_date": 390,
+      "sample_type": 0,
+      "slope_deg": 1365
+    },
+    "required_missing_values": {
+      "rainfall_1d_mm": 0,
+      "rainfall_3d_mm": 0,
+      "rainfall_7d_mm": 0,
+      "soil_moisture_0_7cm": 0,
+      "elevation_m": 0,
       "risk": 0
+    },
+    "optional_slope_coverage": {
+      "available_rows": 0,
+      "missing_rows": 1365
     },
     "duplicates": 0,
     "class_counts": {
-      "0": 649,
-      "1": 491
+      "0": 975,
+      "1": 390
     },
     "feature_ranges": {
       "rainfall_1d_mm": {
         "min": 0.0,
         "max": 199.7,
-        "mean": 14.828166823796662,
+        "mean": 19.0014652014652,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 2000
@@ -37,42 +65,34 @@
       "rainfall_3d_mm": {
         "min": 0.0,
         "max": 406.6,
-        "mean": 45.36431664963151,
+        "mean": 60.661098901098896,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 3000
       },
       "rainfall_7d_mm": {
-        "min": 0.1,
-        "max": 690.5,
-        "mean": 90.4825834204798,
+        "min": 0.0,
+        "max": 749.2,
+        "mean": 121.64644688644691,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 4000
       },
       "soil_moisture_0_7cm": {
-        "min": 0.02,
-        "max": 0.5657438423139866,
-        "mean": 0.35258866635006914,
+        "min": 0.1056011904761904,
+        "max": 0.52,
+        "mean": 0.42184016221873366,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 1
       },
       "elevation_m": {
-        "min": 0.0,
-        "max": 4060.0,
-        "mean": 637.3489147747114,
+        "min": -1.0,
+        "max": 6472.0,
+        "mean": 826.4893772893773,
         "out_of_range_count": 0,
         "expected_min": -500,
         "expected_max": 9000
-      },
-      "slope_deg": {
-        "min": 0.0,
-        "max": 53.56,
-        "mean": 9.842809304917903,
-        "out_of_range_count": 0,
-        "expected_min": 0,
-        "expected_max": 90
       }
     },
     "rainfall_consistency": {
