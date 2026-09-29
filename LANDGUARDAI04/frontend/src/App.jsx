@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Loader2,
   CheckCircle2,
@@ -15,12 +15,82 @@ import {
   TriangleAlert,
   CircleAlert,
   ShieldCheck,
+  Download,
+  FileJson,
+  History,
+  Trash2,
+  RefreshCw,
 } from "lucide-react";
 
 import "./App.css";
 import RiskMap from "./RiskMap";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
+const RECORDS_STORAGE_KEY = "landguard-live-records-v1";
+const SESSION_STORAGE_KEY = "landguard-session-id-v1";
+const MAX_STORED_RECORDS = 50;
+
+function createTraceId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getSessionId() {
+  try {
+    const existing = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (existing) return existing;
+    const sessionId = createTraceId();
+    localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
+    return sessionId;
+  } catch {
+    return createTraceId();
+  }
+}
+
+const SESSION_ID = getSessionId();
+
+function downloadFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function toCsv(records) {
+  const columns = [
+    "id",
+    "correlation_id",
+    "session_id",
+    "trigger",
+    "captured_at",
+    "client_captured_at",
+    "location_name",
+    "latitude",
+    "longitude",
+    "risk_level",
+    "risk_percentage",
+    "rainfall_1d_mm",
+    "rainfall_3d_mm",
+    "rainfall_7d_mm",
+    "soil_moisture_0_7cm",
+    "elevation_m",
+    "slope_deg",
+    "raw_result",
+  ];
+  const escape = (value) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  return [
+    columns.join(","),
+    ...records.map((record) => columns.map((column) => {
+      const value = column === "raw_result"
+        ? JSON.stringify(record[column] ?? {})
+        : record[column];
+      return escape(value);
+    }).join(",")),
+  ].join("\n");
+}
 
 // ============================================================
 // BRAND MARK — a contour-line peak, echoing the topographic
@@ -164,12 +234,126 @@ export default function App() {
   const [liveRisk, setLiveRisk] = useState(null);
   const [liveLoading, setLiveLoading] = useState(false);
   const [locationName, setLocationName] = useState("");
+  const [monitorLocation, setMonitorLocation] = useState(null);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [liveRecords, setLiveRecords] = useState([]);
 
   const [mapMessage, setMapMessage] = useState(
     "Click anywhere on the map to perform a live AI risk assessment."
   );
 
   const [mapStatus, setMapStatus] = useState("idle");
+
+  useEffect(() => {
+    async function loadRecords() {
+      try {
+        const response = await fetch(`${API_BASE}/records?limit=${MAX_STORED_RECORDS}`);
+        if (!response.ok) throw new Error(`Records request failed (${response.status})`);
+        const data = await response.json();
+        setLiveRecords(Array.isArray(data.records) ? data.records : []);
+      } catch (loadError) {
+        console.warn("Using cached live records:", loadError);
+        try {
+          const stored = localStorage.getItem(RECORDS_STORAGE_KEY);
+          setLiveRecords(stored ? JSON.parse(stored) : []);
+        } catch {
+          setLiveRecords([]);
+        }
+      }
+    }
+
+    loadRecords();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(RECORDS_STORAGE_KEY, JSON.stringify(liveRecords));
+  }, [liveRecords]);
+
+  useEffect(() => {
+    if (!autoRefresh || !monitorLocation) return undefined;
+
+    const timer = window.setInterval(() => {
+      handleMapClick(monitorLocation, "scheduled-refresh");
+    }, 15 * 60 * 1000);
+
+    return () => window.clearInterval(timer);
+  }, [autoRefresh, monitorLocation]);
+
+  async function saveLiveRecord(riskData, resolvedLocationName, trigger) {
+    const environment = riskData.environment || {};
+    const predictionResult = riskData.prediction || {};
+    const terrain = riskData.terrain || {};
+    const record = {
+      captured_at: new Date().toISOString(),
+      session_id: SESSION_ID,
+      correlation_id: createTraceId(),
+      trigger,
+      location_name: resolvedLocationName || "Selected map location",
+      latitude: riskData.location?.latitude,
+      longitude: riskData.location?.longitude,
+      risk_level: predictionResult.risk_level,
+      risk_percentage: predictionResult.risk_percentage,
+      rainfall_1d_mm: environment.rainfall_1d_mm,
+      rainfall_3d_mm: environment.rainfall_3d_mm,
+      rainfall_7d_mm: environment.rainfall_7d_mm,
+      soil_moisture_0_7cm:
+        environment.soil_moisture_0_to_7cm ?? environment.soil_moisture_0_7cm,
+      elevation_m: environment.elevation_m,
+      slope_deg: terrain.slope_deg,
+      raw_result: {
+        ...riskData,
+        trace: {
+          reverse_geocode_endpoint: `${API_BASE}/reverse-geocode`,
+          records_endpoint: `${API_BASE}/records`,
+        },
+      },
+    };
+
+    try {
+      const response = await fetch(`${API_BASE}/records`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record),
+      });
+      if (!response.ok) throw new Error(`Record save failed (${response.status})`);
+      const savedRecord = await response.json();
+      setLiveRecords((previous) => [savedRecord, ...previous].slice(0, MAX_STORED_RECORDS));
+    } catch (saveError) {
+      console.warn("Live record saved to browser cache only:", saveError);
+      setLiveRecords((previous) => [
+        { id: `${Date.now()}-${record.latitude}-${record.longitude}`, ...record },
+        ...previous,
+      ].slice(0, MAX_STORED_RECORDS));
+    }
+  }
+
+  function downloadRecords(format) {
+    if (!liveRecords.length) return;
+    const stamp = new Date().toISOString().slice(0, 10);
+    if (format === "json") {
+      downloadFile(
+        `landguard-live-records-${stamp}.json`,
+        JSON.stringify(liveRecords, null, 2),
+        "application/json"
+      );
+      return;
+    }
+    downloadFile(
+      `landguard-live-records-${stamp}.csv`,
+      toCsv(liveRecords),
+      "text/csv;charset=utf-8"
+    );
+  }
+
+  async function clearLiveRecords() {
+    try {
+      const response = await fetch(`${API_BASE}/records`, { method: "DELETE" });
+      if (!response.ok) throw new Error(`Record deletion failed (${response.status})`);
+    } catch (clearError) {
+      console.warn("Backend records could not be cleared:", clearError);
+    }
+    setLiveRecords([]);
+  }
 
   // ==========================================================
   // HANDLE FORM INPUT
@@ -242,9 +426,10 @@ export default function App() {
   // LIVE MAP CLICK
   // ==========================================================
 
-  async function handleMapClick(location) {
+  async function handleMapClick(location, trigger = "map-click") {
     const latitude = Number(location.lat);
     const longitude = Number(location.lng);
+    setMonitorLocation({ lat: latitude, lng: longitude });
 
     setLiveLoading(true);
     setLiveRisk(null);
@@ -285,6 +470,8 @@ export default function App() {
       // REVERSE GEOCODING
       // ------------------------------------------------------
 
+      let resolvedLocationName = "";
+
       try {
         const geoResponse = await fetch(
           `${API_BASE}/reverse-geocode?latitude=${latitude}&longitude=${longitude}`
@@ -299,6 +486,7 @@ export default function App() {
             geoData?.name ||
             "";
 
+          resolvedLocationName = name;
           setLocationName(name);
         }
       } catch (geoError) {
@@ -307,6 +495,8 @@ export default function App() {
           geoError
         );
       }
+
+      await saveLiveRecord(riskData, resolvedLocationName, trigger);
 
       setMapStatus("success");
       setMapMessage(
@@ -351,6 +541,8 @@ export default function App() {
   function clearLiveRisk() {
     setLiveRisk(null);
     setLocationName("");
+    setMonitorLocation(null);
+    setAutoRefresh(false);
     setMapStatus("idle");
 
     setMapMessage(
@@ -604,14 +796,26 @@ export default function App() {
               </p>
             </div>
 
-            {liveRisk && (
-              <button
-                className="clear-live-button"
-                onClick={clearLiveRisk}
-              >
-                Clear live analysis
-              </button>
-            )}
+            <div className="map-actions">
+              {monitorLocation && (
+                <button
+                  className={`monitor-button ${autoRefresh ? "is-active" : ""}`}
+                  onClick={() => setAutoRefresh((enabled) => !enabled)}
+                  title="Refresh selected location every 15 minutes"
+                >
+                  <RefreshCw size={14} />
+                  {autoRefresh ? "Monitoring on" : "Monitor location"}
+                </button>
+              )}
+              {liveRisk && (
+                <button
+                  className="clear-live-button"
+                  onClick={clearLiveRisk}
+                >
+                  Clear live analysis
+                </button>
+              )}
+            </div>
 
           </div>
 
@@ -635,6 +839,105 @@ export default function App() {
             onLocationClick={handleMapClick}
             liveRisk={liveRisk}
           />
+
+        </section>
+
+        {/* ====================================================
+            LIVE RECORD LOG
+        ==================================================== */}
+
+        <section className="dashboard-card records-section">
+
+          <div className="section-header records-header">
+
+            <div>
+              <div className="eyebrow"><History size={13} /> Local assessment log</div>
+              <h2>Live records</h2>
+              <p>
+                Completed map assessments are saved in this browser for quick review and download.
+              </p>
+            </div>
+
+            <div className="record-actions">
+              <button
+                className="secondary-button compact-button"
+                onClick={() => downloadRecords("csv")}
+                disabled={!liveRecords.length}
+                title="Download records as CSV"
+              >
+                <Download size={15} /> CSV
+              </button>
+              <button
+                className="secondary-button compact-button"
+                onClick={() => downloadRecords("json")}
+                disabled={!liveRecords.length}
+                title="Download complete records as JSON"
+              >
+                <FileJson size={15} /> JSON
+              </button>
+              <button
+                className="icon-button"
+                onClick={clearLiveRecords}
+                disabled={!liveRecords.length}
+                title="Clear saved live records"
+                aria-label="Clear saved live records"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+
+          </div>
+
+          {liveRecords.length ? (
+            <div className="records-table-wrap">
+              <table className="records-table">
+                <thead>
+                  <tr>
+                    <th>Captured</th>
+                    <th>Location</th>
+                    <th>Risk</th>
+                    <th>Score</th>
+                    <th>Rainfall 24h</th>
+                    <th>Slope</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {liveRecords.slice(0, 8).map((record) => (
+                    <tr key={record.id}>
+                      <td className="record-time">
+                        {new Date(record.captured_at).toLocaleString([], {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </td>
+                      <td>
+                        <strong>{record.location_name}</strong>
+                        <small>{Number(record.latitude).toFixed(4)}, {Number(record.longitude).toFixed(4)}</small>
+                      </td>
+                      <td>
+                        <span className={`record-risk ${getRiskClass(record.risk_level)}`}>
+                          <RiskIcon level={record.risk_level} size={14} />
+                          {formatRiskLabel(record.risk_level)}
+                        </span>
+                      </td>
+                      <td className="record-number">{Number(record.risk_percentage).toFixed(1)}%</td>
+                      <td className="record-number">{Number(record.rainfall_1d_mm).toFixed(1)} mm</td>
+                      <td className="record-number">{Number(record.slope_deg).toFixed(1)}°</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {liveRecords.length > 8 && (
+                <p className="records-note">Showing the 8 most recent records. Download the file for all {liveRecords.length} saved records.</p>
+              )}
+            </div>
+          ) : (
+            <div className="records-empty">
+              <History size={24} />
+              <strong>No live records yet</strong>
+              <span>Click a location on the map to create the first assessment.</span>
+            </div>
+          )}
 
         </section>
 

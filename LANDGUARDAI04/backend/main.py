@@ -1,12 +1,21 @@
 import os
 
-from fastapi import FastAPI, HTTPException
+from typing import Any
+
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import requests
 import numpy as np
 
 from backend.ml_predictor import predict_risk, model_is_loaded
+from backend.record_store import (
+    create_record,
+    delete_all_records,
+    get_record,
+    init_db,
+    list_records,
+)
 
 
 # ============================================================
@@ -18,6 +27,8 @@ app = FastAPI(
     description="AI-Based Landslide Risk Monitoring System",
     version="2.0"
 )
+
+init_db()
 
 
 # ============================================================
@@ -60,6 +71,25 @@ class RiskRequest(BaseModel):
     slope_deg: float = Field(ge=0, le=90)
 
 
+class LiveRecordRequest(BaseModel):
+    captured_at: str | None = Field(default=None, max_length=80)
+    session_id: str | None = Field(default=None, max_length=100)
+    correlation_id: str | None = Field(default=None, max_length=100)
+    trigger: str = Field(default="map-click", max_length=40)
+    location_name: str = Field(default="Selected map location", max_length=300)
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
+    risk_level: str = Field(min_length=1, max_length=20)
+    risk_percentage: float | None = Field(default=None, ge=0, le=100)
+    rainfall_1d_mm: float | None = Field(default=None, ge=0, le=2000)
+    rainfall_3d_mm: float | None = Field(default=None, ge=0, le=3000)
+    rainfall_7d_mm: float | None = Field(default=None, ge=0, le=4000)
+    soil_moisture_0_7cm: float | None = Field(default=None, ge=0, le=1)
+    elevation_m: float | None = Field(default=None, ge=-500, le=9000)
+    slope_deg: float | None = Field(default=None, ge=0, le=90)
+    raw_result: dict[str, Any] = Field(default_factory=dict)
+
+
 # ============================================================
 # HOME
 # ============================================================
@@ -83,6 +113,36 @@ def health():
         "status": "healthy",
         "model": "loaded" if model_is_loaded() else "unavailable (rule-based fallback active)"
     }
+
+
+# ============================================================
+# LIVE RECORDS
+# ============================================================
+
+@app.get("/records")
+def get_records(limit: int = Query(default=50, ge=1, le=200)):
+    return {"records": list_records(limit)}
+
+
+@app.get("/records/{record_id}")
+def get_record_by_id(record_id: str):
+    record = get_record(record_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Live record not found")
+    return record
+
+
+@app.post("/records", status_code=201)
+def add_record(data: LiveRecordRequest):
+    record = data.model_dump()
+    record["client_captured_at"] = record.pop("captured_at")
+    return create_record(record)
+
+
+@app.delete("/records")
+def clear_records():
+    delete_all_records()
+    return {"deleted": True}
 
 
 # ============================================================
@@ -468,6 +528,20 @@ def live_risk(
                 slope_deg,
                 2
             )
+        },
+
+        "provenance": {
+            "weather": {
+                "provider": "Open-Meteo",
+                "endpoint": "https://api.open-meteo.com/v1/forecast",
+                "past_days": 7,
+                "forecast_days": 0,
+            },
+            "elevation": {
+                "provider": "Open-Meteo",
+                "endpoint": "https://api.open-meteo.com/v1/elevation",
+                "grid_points": 9,
+            },
         },
 
         "prediction": result

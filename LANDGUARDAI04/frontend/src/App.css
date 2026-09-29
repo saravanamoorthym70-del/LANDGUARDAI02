@@ -10,23 +10,23 @@
    ========================================================= */
 
 :root {
-  --ink-900: #0e1512;
-  --surface: #141e19;
-  --surface-raised: #1a2620;
-  --surface-sunken: #0b110e;
+  --ink-900: #eef3f0;
+  --surface: #ffffff;
+  --surface-raised: #f5f8f6;
+  --surface-sunken: #edf3f0;
 
-  --line: #26362f;
-  --line-soft: rgba(234, 241, 236, 0.07);
+  --line: #d7e2dc;
+  --line-soft: rgba(31, 65, 51, 0.12);
 
-  --text-100: #eaf1ec;
-  --text-300: #b7c8bd;
-  --text-500: #8ba095;
-  --text-700: #5c7167;
+  --text-100: #183229;
+  --text-300: #3e5d4f;
+  --text-500: #6a8175;
+  --text-700: #8ca096;
 
-  --accent: #4fb6a8;
-  --accent-strong: #7bd6c9;
-  --accent-soft: rgba(79, 182, 168, 0.14);
-  --accent-ink: #06201c;
+  --accent: #087f73;
+  --accent-strong: #0b9c8c;
+  --accent-soft: rgba(8, 127, 115, 0.11);
+  --accent-ink: #ffffff;
 
   --risk-low: #3fa672;
   --risk-low-soft: rgba(63, 166, 114, 0.16);
@@ -45,9 +45,9 @@
   --radius-md: 12px;
   --radius-lg: 18px;
 
-  --shadow-card: 0 24px 48px -28px rgba(0, 0, 0, 0.65),
-    0 2px 10px rgba(0, 0, 0, 0.3);
-  --shadow-pop: 0 16px 32px -16px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 18px 42px -28px rgba(32, 72, 55, 0.28),
+    0 2px 8px rgba(32, 72, 55, 0.08);
+  --shadow-pop: 0 16px 32px -16px rgba(32, 72, 55, 0.24);
 }
 
 /* =========================================================
@@ -181,7 +181,7 @@
   padding: 44px 40px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: linear-gradient(160deg, #16211c 0%, #0f1815 65%, #0e1512 100%);
+  background: linear-gradient(120deg, #e5f4ee 0%, #f7fbf8 62%, #fffaf0 100%);
 }
 
 .contour-field {
@@ -263,6 +263,35 @@
   color: var(--accent-strong);
 }
 
+.map-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.monitor-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--text-300);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.monitor-button:hover,
+.monitor-button.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 .map-message {
   display: flex;
   align-items: center;
@@ -297,6 +326,186 @@
   color: var(--risk-high);
   border-color: rgba(226, 67, 75, 0.35);
   background: var(--risk-high-soft);
+}
+
+/* =========================================================
+   LIVE RECORD LOG
+   ========================================================= */
+
+.records-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f5faf7 100%);
+}
+
+.records-header {
+  align-items: center;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.record-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.compact-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-500);
+  cursor: pointer;
+}
+
+.icon-button:hover:not(:disabled) {
+  border-color: var(--risk-high);
+  color: var(--risk-high);
+}
+
+.icon-button:disabled,
+.compact-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.records-table-wrap {
+  margin-top: 20px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.records-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.records-table th {
+  padding: 11px 13px;
+  background: var(--surface-sunken);
+  color: var(--text-500);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.records-table td {
+  padding: 13px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--text-300);
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.records-table tbody tr:hover {
+  background: rgba(8, 127, 115, 0.035);
+}
+
+.records-table td strong,
+.records-table td small {
+  display: block;
+}
+
+.records-table td strong {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--text-100);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.records-table td small {
+  margin-top: 3px;
+  color: var(--text-500);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.record-time,
+.record-number {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.record-risk {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.record-risk.high {
+  background: var(--risk-high-soft);
+  color: var(--risk-high);
+}
+
+.record-risk.medium {
+  background: var(--risk-medium-soft);
+  color: #9a681d;
+}
+
+.record-risk.low {
+  background: var(--risk-low-soft);
+  color: #24784e;
+}
+
+.records-note {
+  padding: 10px 13px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--text-500);
+  font-size: 11.5px;
+}
+
+.records-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-500);
+}
+
+.records-empty strong {
+  color: var(--text-300);
+  font-size: 13px;
+}
+
+.records-empty span {
+  font-size: 12px;
 }
 
 .risk-map-wrapper {
@@ -359,11 +568,12 @@
   min-width: 160px;
   padding: 14px 16px;
 
-  background: rgba(20, 30, 25, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   color: var(--text-100);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pop);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -1107,6 +1317,15 @@
 
   .section-header {
     flex-direction: column;
+  }
+
+  .record-actions {
+    width: 100%;
+  }
+
+  .record-actions .compact-button {
+    flex: 1;
+    justify-content: center;
   }
 
   .environment-grid,

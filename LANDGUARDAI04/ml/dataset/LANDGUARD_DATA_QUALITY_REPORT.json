@@ -1,5 +1,5 @@
 {
-  "file": "/mnt/data/lg/ml/dataset/LANDGUARD_FINAL_DATASET.csv",
+  "file": "C:\\Users\\Dell\\Downloads\\LANDGUARDAI04\\LANDGUARDAI04\\ml\\dataset\\LANDGUARD_FINAL_DATASET.csv",
   "rows": 1140,
   "columns": [
     "rainfall_1d_mm",

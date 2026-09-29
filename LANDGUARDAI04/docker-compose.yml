@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile.backend
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend/data:/app/backend/data
     environment:
       - CORS_ALLOWED_ORIGINS=http://localhost:8080
     restart: unless-stopped

@@ -13,6 +13,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.main import app
+from backend import record_store
 
 client = TestClient(app)
 
@@ -42,6 +43,64 @@ def test_health():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
+
+
+def test_live_records_crud(monkeypatch, tmp_path):
+    monkeypatch.setattr(record_store, "_database_path", lambda: tmp_path / "records.db")
+    record_store.init_db()
+
+    payload = {
+        "location_name": "Shillong, Meghalaya",
+        "latitude": 25.57,
+        "longitude": 91.88,
+        "risk_level": "MEDIUM",
+        "risk_percentage": 42.5,
+        "rainfall_1d_mm": 32.1,
+        "rainfall_3d_mm": 88.4,
+        "rainfall_7d_mm": 145.0,
+        "soil_moisture_0_7cm": 0.42,
+        "elevation_m": 1496,
+        "slope_deg": 18.2,
+        "session_id": "browser-session-1",
+        "correlation_id": "assessment-1",
+        "trigger": "map-click",
+        "captured_at": "2026-09-15T07:00:00+00:00",
+        "raw_result": {"prediction": {"risk_level": "MEDIUM"}},
+    }
+
+    created = client.post("/records", json=payload)
+    assert created.status_code == 201
+    assert created.json()["id"]
+    assert created.json()["session_id"] == "browser-session-1"
+    assert created.json()["correlation_id"] == "assessment-1"
+    assert created.json()["trigger"] == "map-click"
+    assert created.json()["client_captured_at"] == "2026-09-15T07:00:00+00:00"
+    assert created.json()["captured_at"] != payload["captured_at"]
+    assert created.json()["raw_result"] == payload["raw_result"]
+
+    listed = client.get("/records")
+    assert listed.status_code == 200
+    assert len(listed.json()["records"]) == 1
+    assert listed.json()["records"][0]["location_name"] == "Shillong, Meghalaya"
+
+    fetched = client.get(f"/records/{created.json()['id']}")
+    assert fetched.status_code == 200
+    assert fetched.json()["correlation_id"] == "assessment-1"
+
+    missing = client.get("/records/missing-record")
+    assert missing.status_code == 404
+
+    cleared = client.delete("/records")
+    assert cleared.status_code == 200
+    assert client.get("/records").json()["records"] == []
+
+
+def test_live_records_reject_invalid_coordinates():
+    response = client.post(
+        "/records",
+        json={"latitude": 95, "longitude": 91, "risk_level": "HIGH"},
+    )
+    assert response.status_code == 422
 
 
 # ------------------------------------------------------------------
