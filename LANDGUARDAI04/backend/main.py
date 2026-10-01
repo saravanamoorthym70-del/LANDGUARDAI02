@@ -235,11 +235,11 @@ def live_environment(latitude: float, longitude: float):
             detail=f"Failed to retrieve live environmental data: {exc}"
         ) from exc
 
-    if response.status_code != 200:
-        raise HTTPException(
-            status_code=502,
-            detail="Failed to retrieve live environmental data."
-        )
+   if response.status_code != 200:
+    raise HTTPException(
+        status_code=502,
+        detail=f"Open-Meteo error {response.status_code}: {response.text}"
+    )
 
     data = response.json()
 
