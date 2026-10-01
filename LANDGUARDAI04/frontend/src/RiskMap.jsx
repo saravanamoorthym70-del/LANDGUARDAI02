@@ -4,8 +4,8 @@ import {
   MapContainer,
   TileLayer,
   CircleMarker,
-  Circle,
   Popup,
+  useMap,
   useMapEvents,
 } from "react-leaflet";
 import {
@@ -24,19 +24,27 @@ import "leaflet/dist/leaflet.css";
 
 function MapClickHandler({
   onLocationClick,
-  onLiveLocation,
 }) {
   useMapEvents({
     click(e) {
       const location = e.latlng;
 
-      // Immediately display clicked location
-      onLiveLocation(location);
-
       // Start live AI analysis
       onLocationClick(location);
     },
   });
+
+  return null;
+}
+
+function MapFocusController({ location }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (location) {
+      map.flyTo([location.lat, location.lng], 11, { duration: 1 });
+    }
+  }, [location, map]);
 
   return null;
 }
@@ -95,7 +103,7 @@ function HistoricalMarker({ item }) {
         latitude,
         longitude,
       ]}
-      radius={6}
+      radius={4}
       pathOptions={{
         color,
         fillColor: color,
@@ -246,24 +254,9 @@ function LiveLocationMarker({
   const displayRisk =
     riskLevel || "ANALYZING";
 
-  // ==========================================================
-  // RISK VISUALIZATION RADIUS
-  // ==========================================================
-
   const percentage = Number(
     riskPercentage
   );
-
-  const radius =
-    Number.isFinite(percentage)
-      ? Math.max(
-          300,
-          Math.min(
-            percentage * 12,
-            1200
-          )
-        )
-      : 500;
 
   return (
     <>
@@ -271,12 +264,12 @@ function LiveLocationMarker({
           RISK INTENSITY AREA
       ====================================================== */}
 
-      <Circle
+      <CircleMarker
         center={[
           location.lat,
           location.lng,
         ]}
-        radius={radius}
+        radius={22}
         pathOptions={{
           color,
           fillColor: color,
@@ -444,6 +437,8 @@ export default function RiskMap({
   liveRisk,
   records = [],
   apiBaseUrl,
+  selectedLocation,
+  focusLocation,
 }) {
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -483,11 +478,6 @@ export default function RiskMap({
   // LIVE LOCATION
   // ==========================================================
 
-  const [
-    liveLocation,
-    setLiveLocation,
-  ] = useState(null);
-
   // ==========================================================
   // LIVE AI RESULT
   // ==========================================================
@@ -520,6 +510,8 @@ export default function RiskMap({
         scrollWheelZoom={true}
         className="risk-map"
       >
+
+        <MapFocusController location={focusLocation} />
 
         {/* ====================================================
             OPENSTREETMAP
@@ -555,7 +547,7 @@ export default function RiskMap({
         ==================================================== */}
 
         <LiveLocationMarker
-          location={liveLocation}
+          location={selectedLocation}
           riskLevel={riskLevel}
           riskPercentage={
             riskPercentage
@@ -569,9 +561,6 @@ export default function RiskMap({
         <MapClickHandler
           onLocationClick={
             onLocationClick
-          }
-          onLiveLocation={
-            setLiveLocation
           }
         />
 

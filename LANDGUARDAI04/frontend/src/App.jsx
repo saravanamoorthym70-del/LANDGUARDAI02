@@ -233,8 +233,10 @@ export default function App() {
 
   const [liveRisk, setLiveRisk] = useState(null);
   const [liveLoading, setLiveLoading] = useState(false);
+  const [locating, setLocating] = useState(false);
   const [locationName, setLocationName] = useState("");
   const [monitorLocation, setMonitorLocation] = useState(null);
+  const [mapFocusLocation, setMapFocusLocation] = useState(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [liveRecords, setLiveRecords] = useState([]);
 
@@ -474,6 +476,20 @@ export default function App() {
       );
 
       setLiveRisk(riskData);
+      const environment = riskData.environment || {};
+      const terrain = riskData.terrain || {};
+      setFormData({
+        rainfall_1d_mm: String(environment.rainfall_1d_mm ?? ""),
+        rainfall_3d_mm: String(environment.rainfall_3d_mm ?? ""),
+        rainfall_7d_mm: String(environment.rainfall_7d_mm ?? ""),
+        soil_moisture_0_7cm: String(
+          environment.soil_moisture_0_to_7cm ??
+          environment.soil_moisture_0_7cm ??
+          ""
+        ),
+        elevation_m: String(environment.elevation_m ?? ""),
+        slope_deg: String(terrain.slope_deg ?? ""),
+      });
 
       // ------------------------------------------------------
       // REVERSE GEOCODING
@@ -523,6 +539,42 @@ export default function App() {
     } finally {
       setLiveLoading(false);
     }
+  }
+
+  function handleCurrentLocation() {
+    if (!navigator.geolocation) {
+      setMapStatus("error");
+      setMapMessage("This browser does not support location access.");
+      return;
+    }
+
+    setLocating(true);
+    setMapStatus("analyzing");
+    setMapMessage("Finding your current location...");
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const location = {
+          lat: coords.latitude,
+          lng: coords.longitude,
+        };
+        setMapFocusLocation(location);
+        setLocating(false);
+        handleMapClick(location, "current-location");
+      },
+      (geoError) => {
+        setLocating(false);
+        setMapStatus("error");
+        if (geoError.code === 1) {
+          setMapMessage("Location access was denied. Allow location permission and try again.");
+        } else if (geoError.code === 3) {
+          setMapMessage("Finding your location timed out. Please try again.");
+        } else {
+          setMapMessage("Your location is unavailable. Check your device location settings and try again.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+    );
   }
 
   // ==========================================================
@@ -806,6 +858,15 @@ export default function App() {
             </div>
 
             <div className="map-actions">
+              <button
+                className="monitor-button"
+                onClick={handleCurrentLocation}
+                disabled={locating || liveLoading}
+                title="Use your device GPS to assess your current location"
+              >
+                {locating ? <Loader2 size={14} className="spin" /> : <MapPin size={14} />}
+                {locating ? "Finding location..." : "Check my current location"}
+              </button>
               {monitorLocation && (
                 <button
                   className={`monitor-button ${autoRefresh ? "is-active" : ""}`}
@@ -849,6 +910,8 @@ export default function App() {
             liveRisk={liveRisk}
             records={liveRecords}
             apiBaseUrl={API_BASE}
+            selectedLocation={monitorLocation}
+            focusLocation={mapFocusLocation}
           />
 
         </section>

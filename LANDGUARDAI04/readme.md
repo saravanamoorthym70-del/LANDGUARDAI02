@@ -13,7 +13,7 @@ AI-based early warning and landslide risk monitoring for the North Eastern Regio
 - Backend coordinate validation and safer live elevation handling.
 - Live weather requests use seven past days without adding a forecast day to the 1/3/7-day rainfall windows.
 - Completed live map assessments are stored in the backend SQLite record store with CSV and full JSON export.
-- Selected locations support manual refresh and optional 15-minute automatic monitoring.
+- The current-location button uses browser GPS to center the map and assess the device location; selected locations also support manual refresh and optional 15-minute monitoring.
 - Daylight cartography UI with responsive recent-record review and risk badges.
 - Model card and data-upgrade guide documenting limitations honestly.
 
@@ -57,7 +57,7 @@ pytest backend/tests -v
 
 ### Live record log
 
-Click a map location to run a live assessment. After a successful assessment, the frontend sends the location, risk inputs, complete response, browser session ID, per-assessment correlation ID, and trigger (`map-click` or `scheduled-refresh`) to the backend SQLite record store. The backend assigns a UUID and authoritative capture timestamp while retaining the client timestamp as metadata. Use `GET /records/{record_id}` to retrieve one assessment directly. The **Live records** panel shows the eight most recent entries and supports CSV export with trace metadata and JSON export for the complete raw records. A browser-local cache is used only when the backend is temporarily unavailable. The selected location can also be manually refreshed or monitored automatically every 15 minutes.
+Click a map location or choose **Check my current location** to run a live assessment. Current-location assessment requires browser location permission and a secure context (HTTPS or localhost). After a successful assessment, the frontend sends the location, risk inputs, complete response, browser session ID, per-assessment correlation ID, and trigger (`map-click`, `current-location`, or `scheduled-refresh`) to the backend SQLite record store. The backend assigns a UUID and authoritative capture timestamp while retaining the client timestamp as metadata. Use `GET /records/{record_id}` to retrieve one assessment directly. The **Live records** panel shows the eight most recent entries and supports CSV export with trace metadata and JSON export for the complete raw records. A browser-local cache is used only when the backend is temporarily unavailable. The selected location can also be manually refreshed or monitored automatically every 15 minutes.
 
 ## Improved real-data pipeline
 
