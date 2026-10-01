@@ -3,7 +3,7 @@ import os
 
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, params
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import requests
@@ -229,18 +229,17 @@ def live_environment(latitude: float, longitude: float):
 
     try:
         response = requests.get(url, params=params, timeout=30)
-    except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+    except requests.RequestException as exc:
         raise HTTPException(
             status_code=502,
             detail=f"Failed to retrieve live environmental data: {exc}"
-        ) from exc
+        )
 
-   if response.status_code != 200:
-    raise HTTPException(
-        status_code=502,
-        detail=f"Open-Meteo error {response.status_code}: {response.text}"
-    )
-
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Open-Meteo error {response.status_code}: {response.text}"
+        )
     data = response.json()
 
     hourly = data.get("hourly", {})
