@@ -1,6 +1,6 @@
 {
   "file": "C:\\Users\\Dell\\Downloads\\LANDGUARDAI04\\LANDGUARDAI04\\ml\\dataset\\LANDGUARD_FINAL_DATASET.csv",
-  "rows": 1365,
+  "rows": 1039,
   "columns": [
     "rainfall_1d_mm",
     "rainfall_3d_mm",
@@ -30,11 +30,11 @@
       "longitude": 0,
       "state": 0,
       "region": 0,
-      "event_id": 975,
-      "event_date": 975,
+      "event_id": 649,
+      "event_date": 649,
       "sample_date": 390,
       "sample_type": 0,
-      "slope_deg": 1365
+      "slope_deg": 1039
     },
     "required_missing_values": {
       "rainfall_1d_mm": 0,
@@ -46,18 +46,18 @@
     },
     "optional_slope_coverage": {
       "available_rows": 0,
-      "missing_rows": 1365
+      "missing_rows": 1039
     },
     "duplicates": 0,
     "class_counts": {
-      "0": 975,
+      "0": 649,
       "1": 390
     },
     "feature_ranges": {
       "rainfall_1d_mm": {
         "min": 0.0,
         "max": 199.7,
-        "mean": 19.0014652014652,
+        "mean": 22.652358036573627,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 2000
@@ -65,7 +65,7 @@
       "rainfall_3d_mm": {
         "min": 0.0,
         "max": 406.6,
-        "mean": 60.661098901098896,
+        "mean": 72.42531280076996,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 3000
@@ -73,23 +73,23 @@
       "rainfall_7d_mm": {
         "min": 0.0,
         "max": 749.2,
-        "mean": 121.64644688644691,
+        "mean": 143.88402309913377,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 4000
       },
       "soil_moisture_0_7cm": {
-        "min": 0.1056011904761904,
+        "min": 0.133,
         "max": 0.52,
-        "mean": 0.42184016221873366,
+        "mean": 0.4409607566799578,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 1
       },
       "elevation_m": {
-        "min": -1.0,
+        "min": 0.0,
         "max": 6472.0,
-        "mean": 826.4893772893773,
+        "mean": 969.1953801732435,
         "out_of_range_count": 0,
         "expected_min": -500,
         "expected_max": 9000
