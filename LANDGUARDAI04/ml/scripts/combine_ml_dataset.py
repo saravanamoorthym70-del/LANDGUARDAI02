@@ -19,10 +19,16 @@ import pandas as pd
 
 from ml.scripts.common import DATASET_DIR, MODEL_FEATURES, TARGET_COLUMN, region_for_state
 
-HISTORICAL_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_terrain_data.csv")
-BACKGROUND_CSV = os.path.join(DATASET_DIR, "BACKGROUND_TERRAIN_DATA.csv")
+HISTORICAL_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_slope_data.csv")
+BACKGROUND_CSV = os.path.join(DATASET_DIR, "BACKGROUND_SLOPE_DATA.csv")
+EVENT_INVENTORY_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_landslides.csv")
+OSM_CONTEXT_CSV = os.path.join(DATASET_DIR, "OSM_DISTANCE_FEATURES.csv")
 OUTPUT_CSV = os.path.join(DATASET_DIR, "LANDGUARD_FINAL_DATASET.csv")
-OPTIONAL_CONTEXT_COLUMNS = ("slope_deg",)
+OPTIONAL_CONTEXT_COLUMNS = (
+  "slope_deg",
+  "distance_to_road_km",
+  "distance_to_settlement_km",
+)
 METADATA_COLUMNS = (
   "latitude",
   "longitude",
@@ -32,7 +38,21 @@ METADATA_COLUMNS = (
   "event_date",
   "sample_date",
   "sample_type",
+  "location_accuracy",
+  "location_accuracy_km",
 )
+
+
+def merge_osm_context(combined, osm_context):
+  distance_columns = ("distance_to_road_km", "distance_to_settlement_km")
+  base = combined.drop(columns=list(distance_columns), errors="ignore")
+  context = osm_context.drop_duplicates(["latitude", "longitude", "state"])
+  return base.merge(
+    context,
+    on=["latitude", "longitude", "state"],
+    how="left",
+    validate="many_to_one",
+  )
 
 
 def main():
@@ -41,6 +61,24 @@ def main():
             sys.exit(f"Missing {path} — run the earlier pipeline stages first.")
 
     historical = pd.read_csv(HISTORICAL_CSV)
+    if os.path.exists(EVENT_INVENTORY_CSV):
+      inventory = pd.read_csv(EVENT_INVENTORY_CSV)
+      if {"event_id", "location_accuracy_km"}.issubset(inventory.columns):
+        accuracy_columns = [
+          column for column in ("event_id", "location_accuracy", "location_accuracy_km")
+          if column in inventory.columns
+        ]
+        accuracy = inventory[accuracy_columns].drop_duplicates("event_id")
+        historical = historical.drop(
+          columns=[column for column in accuracy_columns if column != "event_id" and column in historical],
+          errors="ignore",
+        ).merge(accuracy, on="event_id", how="inner")
+        print(
+          "Location-accuracy filter applied to enriched events: "
+          f"{len(historical)} rows retained."
+        )
+      else:
+        print("Location accuracy unavailable in event inventory; enriched events were not filtered.")
     historical[TARGET_COLUMN] = 1
     historical["sample_type"] = "historical_event"
 
@@ -70,6 +108,11 @@ def main():
     print(f"Background locations   (risk=0): {len(background)}")
 
     combined = pd.concat([historical, background], ignore_index=True)
+    if os.path.exists(OSM_CONTEXT_CSV):
+      osm_context = pd.read_csv(OSM_CONTEXT_CSV).drop_duplicates(
+        ["latitude", "longitude", "state"]
+      )
+      combined = merge_osm_context(combined, osm_context)
     before = len(combined)
     combined = combined.drop_duplicates().reset_index(drop=True)
     print(f"Exact duplicate rows removed: {before - len(combined)}")

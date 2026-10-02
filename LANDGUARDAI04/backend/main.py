@@ -19,6 +19,7 @@ from backend.record_store import (
     init_db,
     list_records,
 )
+from backend.risk_grid import get_risk_grid_geojson, parse_bbox
 
 
 # ============================================================
@@ -747,3 +748,15 @@ def reverse_geocode(
             "country"
         )
     }
+
+
+@app.get("/risk-grid")
+def get_risk_grid(
+    bbox: str | None = None,
+    limit: int = Query(default=2000, ge=1, le=10000),
+):
+    try:
+        parsed_bbox = parse_bbox(bbox)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return get_risk_grid_geojson(parsed_bbox, limit)

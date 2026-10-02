@@ -35,9 +35,90 @@ def main():
         report['checks']['optional_slope_coverage'] = {
             'available_rows': int(optional_slope.notna().sum()),
             'missing_rows': int(optional_slope.isna().sum()),
+            'source_note': 'Approximate 3x3 Open-Meteo elevation-grid gradient; not a 30 m DEM product.',
+        }
+    if 'location_accuracy_km' in df:
+        event_accuracy = pd.to_numeric(
+            df.loc[df[TARGET_COLUMN] == 1, 'location_accuracy_km'], errors='coerce'
+        )
+        report['checks']['event_location_accuracy'] = {
+            'max_accuracy_km': 1.0,
+            'positive_rows': int((df[TARGET_COLUMN] == 1).sum()),
+            'measured_positive_rows': int(event_accuracy.notna().sum()),
+            'outside_threshold_rows': int((event_accuracy > 1.0).sum()),
+            'source_field': 'NASA Global Landslide Catalog location_accuracy',
+        }
+        accuracy_ok = (
+            event_accuracy.notna().all()
+            and event_accuracy.le(1.0).all()
+        )
+    else:
+        report['checks']['event_location_accuracy'] = {
+            'available': False,
+            'reason': 'location_accuracy_km is absent from the combined dataset.',
+        }
+        accuracy_ok = False
+    temporal_negatives = int(
+        df.get('sample_type', pd.Series(dtype=str)).eq('temporal_negative').sum()
+    )
+    report['checks']['temporal_negative_rows'] = {
+        'count': temporal_negatives,
+        'available': temporal_negatives > 0,
+    }
+    requested_features = (
+        'aspect_deg', 'curvature', 'twi', 'rainfall_14d_mm', 'rainfall_30d_mm',
+        'antecedent_precipitation_index', 'rainfall_intensity', 'ndvi',
+        'landcover_class', 'lithology', 'distance_to_river_km',
+        'distance_to_fault_km', 'distance_to_road_km',
+        'distance_to_settlement_km',
+    )
+    report['checks']['requested_feature_availability'] = {
+        column: {
+            'available_rows': int(df[column].notna().sum()) if column in df else 0,
+            'present': column in df,
+        }
+        for column in requested_features
+    }
+    report['checks']['spatial_reporting_proximity'] = {}
+    for column in ('distance_to_road_km', 'distance_to_settlement_km'):
+        if column not in df:
+            report['checks']['spatial_reporting_proximity'][column] = {
+                'available': False,
+                'reason': 'OSM proximity enrichment has not been run.',
+            }
+            continue
+        numeric = pd.to_numeric(df[column], errors='coerce')
+        report['checks']['spatial_reporting_proximity'][column] = {
+            'available_rows': int(numeric.notna().sum()),
+            'event_median_km': (
+                float(numeric[df[TARGET_COLUMN] == 1].median())
+                if numeric[df[TARGET_COLUMN] == 1].notna().any() else None
+            ),
+            'background_median_km': (
+                float(numeric[df[TARGET_COLUMN] == 0].median())
+                if numeric[df[TARGET_COLUMN] == 0].notna().any() else None
+            ),
+            'source': 'OpenStreetMap regional PBF extracts; <=20 km nearest-feature search.',
         }
     report['checks']['duplicates'] = int(df.duplicated().sum())
     report['checks']['class_counts'] = {str(k): int(v) for k,v in df['risk'].value_counts().sort_index().items()}
+    coverage_columns = ['region', 'state', 'sample_type', TARGET_COLUMN]
+    if all(column in df.columns for column in coverage_columns):
+        coverage = (
+            df.groupby(coverage_columns, dropna=False)
+            .size()
+            .reset_index(name='rows')
+        )
+        report['checks']['coverage_by_region_state'] = [
+            {
+                'region': None if pd.isna(row.region) else str(row.region),
+                'state': None if pd.isna(row.state) else str(row.state),
+                'sample_type': None if pd.isna(row.sample_type) else str(row.sample_type),
+                'risk': int(row.risk),
+                'rows': int(row.rows),
+            }
+            for row in coverage.itertuples(index=False)
+        ]
     report['checks']['feature_ranges'] = {}
     for col,(lo,hi) in RANGES.items():
         s = pd.to_numeric(df[col], errors='coerce')
@@ -55,6 +136,8 @@ def main():
     ) and report['checks']['duplicates'] == 0 and all(
         v['out_of_range_count'] == 0 for v in report['checks']['feature_ranges'].values()
     ) and report['checks']['rainfall_consistency']['r1_gt_r3_count'] == 0 and report['checks']['rainfall_consistency']['r3_gt_r7_count'] == 0 else 'REVIEW'
+    if not accuracy_ok or temporal_negatives == 0:
+        report['checks']['quality_status'] = 'REVIEW'
     with open(REPORT, 'w', encoding='utf-8') as f:
         json.dump(report, f, indent=2)
     print(json.dumps(report, indent=2))

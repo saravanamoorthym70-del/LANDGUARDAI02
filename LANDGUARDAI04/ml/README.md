@@ -2,7 +2,7 @@
 
 This mirrors the data pipeline described in the project workflow doc
 (sections 2–14): historical landslide data → environmental enrichment
-→ background sampling → combined dataset → trained Random Forest.
+→ background sampling → combined dataset → model comparison and training.
 
 ## Directory layout
 
@@ -24,6 +24,7 @@ ml/
     ├── get_background_elevation.py         Stage 7
     ├── get_background_slope.py             Stage 8
     ├── combine_ml_dataset.py               Stage 9 — merge into LANDGUARD_FINAL_DATASET.csv
+    ├── enrich_osm_context.py               Optional Northeast road/settlement distances
     │
     │  ── offline bootstrap (no internet required) ──
     ├── build_placeholder_dataset.py        alternative to stages 5–9
@@ -55,10 +56,19 @@ python -m ml.scripts.combine_ml_dataset
 python -m ml.scripts.train_real_model
 ```
 
-Each script picks up where the previous one left off (reading the
-previous stage's output CSV) and prints its own progress/row counts,
-matching the numbers documented in the workflow doc (494 historical
-events, 649 usable background samples, 1,143 total).
+Each script picks up where the previous one left off and prints progress
+and row counts. The current local catalog has 390 target-region events
+before accuracy filtering; the inventory stage retains only events
+reported as `exact` or <=1 km uncertainty. The current table has 79 such
+events and 649 complete-feature background rows. Counts may change when
+the source files are refreshed.
+
+For optional Northeast reporting-bias diagnostics, after building the
+combined table run `enrich_osm_context.py` with the downloaded Northeast and
+Eastern OSM PBF extracts. It writes `OSM_DISTANCE_FEATURES.csv` and updates
+the combined table. The distance columns are context-only and are not model
+inputs. A Southern Zone extract is needed to cover the five South comparison
+states.
 
 ### Option B — offline bootstrap (what this repo ships with)
 

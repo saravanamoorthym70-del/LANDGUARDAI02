@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
+  GeoJSON,
   CircleMarker,
   Popup,
   useMap,
@@ -14,6 +15,7 @@ import {
   Loader2,
   MousePointerClick,
   RefreshCw,
+  Layers,
 } from "lucide-react";
 
 import "leaflet/dist/leaflet.css";
@@ -45,6 +47,24 @@ function MapFocusController({ location }) {
       map.flyTo([location.lat, location.lng], 11, { duration: 1 });
     }
   }, [location, map]);
+
+  return null;
+}
+
+function MapBoundsWatcher({ onBoundsChange }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const updateBounds = () => {
+      const bounds = map.getBounds();
+      onBoundsChange(
+        [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()].join(","),
+      );
+    };
+    map.on("moveend", updateBounds);
+    updateBounds();
+    return () => map.off("moveend", updateBounds);
+  }, [map, onBoundsChange]);
 
   return null;
 }
@@ -444,6 +464,11 @@ export default function RiskMap({
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState(false);
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
+  const [gridEnabled, setGridEnabled] = useState(false);
+  const [gridBounds, setGridBounds] = useState("");
+  const [riskGrid, setRiskGrid] = useState(null);
+  const [gridLoading, setGridLoading] = useState(false);
+  const [gridError, setGridError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -474,6 +499,39 @@ export default function RiskMap({
     };
   }, [apiBaseUrl, historyRefreshKey]);
 
+  useEffect(() => {
+    if (!gridEnabled || !gridBounds) return undefined;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      setGridLoading(true);
+      setGridError(false);
+      try {
+        const query = new URLSearchParams({ bbox: gridBounds, limit: "5000" });
+        const response = await fetch(`${apiBaseUrl}/risk-grid?${query}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`Risk grid request failed (${response.status})`);
+        }
+        const data = await response.json();
+        setRiskGrid(data);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.warn("Risk grid could not be loaded:", error);
+          setGridError(true);
+        }
+      } finally {
+        if (!controller.signal.aborted) setGridLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [apiBaseUrl, gridBounds, gridEnabled]);
+
   // ==========================================================
   // LIVE LOCATION
   // ==========================================================
@@ -498,6 +556,7 @@ export default function RiskMap({
   ];
 
   return (
+    <>
     <div className="risk-map-wrapper">
 
       {/* ======================================================
@@ -512,6 +571,7 @@ export default function RiskMap({
       >
 
         <MapFocusController location={focusLocation} />
+        <MapBoundsWatcher onBoundsChange={setGridBounds} />
 
         {/* ====================================================
             OPENSTREETMAP
@@ -521,6 +581,23 @@ export default function RiskMap({
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {gridEnabled && riskGrid?.features?.length > 0 && (
+          <GeoJSON
+            key={`${riskGrid.last_updated}-${riskGrid.features.length}`}
+            data={riskGrid}
+            style={(feature) => {
+              const color = getRiskColor(feature.properties?.risk_band);
+              return {
+                color,
+                fillColor: color,
+                fillOpacity: 0.38,
+                opacity: 0.75,
+                weight: 0.5,
+              };
+            }}
+          />
+        )}
 
         {historicalEvents.map(
             (item, index) => (
@@ -588,6 +665,72 @@ export default function RiskMap({
         historyError={historyError}
       />
 
+      <div className="risk-grid-control">
+        <button
+          type="button"
+          className={`risk-grid-toggle ${gridEnabled ? "is-active" : ""}`}
+          aria-pressed={gridEnabled}
+          onClick={() => setGridEnabled((enabled) => !enabled)}
+          title="Toggle the regional screening grid"
+        >
+          <Layers size={15} />
+          <span>Region grid</span>
+        </button>
+        {gridEnabled && (
+          <div className="risk-grid-updated" aria-live="polite">
+            {gridLoading ? "Loading grid…" : gridError ? "Grid unavailable" : riskGrid?.last_updated
+              ? `Updated ${new Date(riskGrid.last_updated).toLocaleString()}`
+              : "No grid results yet"}
+          </div>
+        )}
+      </div>
     </div>
+
+      {gridEnabled && (
+        <section className="risk-grid-summary" aria-label="Highest-risk districts">
+          <div className="risk-grid-summary-heading">
+            <h3>Highest-risk districts</h3>
+            <span>{riskGrid?.grid_size_m ? `${riskGrid.grid_size_m} m cells` : "No grid"}</span>
+          </div>
+          {gridError ? (
+            <p className="risk-grid-empty">District summary could not be loaded.</p>
+          ) : riskGrid?.district_summary?.length ? (
+            <div className="risk-grid-table-wrap">
+              <table>
+                <thead>
+                  <tr><th>District</th><th>State</th><th>Peak</th><th>High cells</th></tr>
+                </thead>
+                <tbody>
+                  {riskGrid.district_summary.map((district) => (
+                    <tr key={`${district.state}-${district.district}`}>
+                      <td>{district.district}</td>
+                      <td>{district.state}</td>
+                      <td>{Number(district.max_score).toFixed(1)}%</td>
+                      <td>{district.high_cells}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : riskGrid?.count > 0 ? (
+            <p className="risk-grid-empty">Cells are scored, but none have an unambiguous district assignment for ranking.</p>
+          ) : (
+            <p className="risk-grid-empty">No scored cells yet. Run the grid job to populate this view.</p>
+          )}
+          {riskGrid && !riskGrid.complete && riskGrid.last_updated && (
+            <p className="risk-grid-incomplete">
+              Incomplete run: {riskGrid.generated_cells} cells processed; {riskGrid.failed_cells} data failures.
+            </p>
+          )}
+          {riskGrid?.district_unassigned_cells > 0 && (
+            <p className="risk-grid-incomplete">
+              District attribution unavailable for {riskGrid.district_unassigned_cells} cells.
+            </p>
+          )}
+          <p className="risk-grid-disclaimer">Prototype screening score, not an official warning.</p>
+        </section>
+      )}
+
+    </>
   );
 } 

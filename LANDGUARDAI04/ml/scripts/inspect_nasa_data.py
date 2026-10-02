@@ -17,6 +17,7 @@ Run:
 """
 
 import os
+import re
 import sys
 
 import pandas as pd
@@ -26,6 +27,7 @@ from ml.scripts.common import DATASET_DIR, TARGET_STATES, region_for_state
 RAW_CSV = os.path.join(DATASET_DIR, "NASA_Global_Landslide_Catalog.csv")
 INDIA_CSV = os.path.join(DATASET_DIR, "INDIA_landslides.csv")
 OUTPUT_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_landslides.csv")
+MAX_LOCATION_ACCURACY_KM = 1.0
 
 # The NASA GLC export uses these column names; we normalize to the
 # lowercase snake_case names used throughout the rest of the pipeline.
@@ -36,6 +38,7 @@ COLUMN_MAP = {
     "location_description": "location",
     "latitude": "latitude",
     "longitude": "longitude",
+    "location_accuracy": "location_accuracy",
     "landslide_category": "landslide_category",
     "landslide_trigger": "landslide_trigger",
     "landslide_size": "landslide_size",
@@ -64,6 +67,39 @@ def load_raw():
     return df[keep]
 
 
+def parse_location_accuracy_km(value):
+    if pd.isna(value):
+        return None
+    normalized = str(value).strip().lower()
+    if normalized == "exact":
+        return 0.0
+    match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*km", normalized)
+    return float(match.group(1)) if match else None
+
+
+def filter_accurate_events(events, max_accuracy_km=MAX_LOCATION_ACCURACY_KM):
+    if "location_accuracy" not in events.columns:
+        return events.copy(), {
+            "available": False,
+            "input_rows": int(len(events)),
+            "retained_rows": int(len(events)),
+            "excluded_rows": 0,
+            "max_accuracy_km": float(max_accuracy_km),
+        }
+
+    accuracy_km = events["location_accuracy"].map(parse_location_accuracy_km)
+    retained = accuracy_km.notna() & accuracy_km.le(max_accuracy_km)
+    filtered = events.loc[retained].copy()
+    filtered["location_accuracy_km"] = accuracy_km.loc[retained].astype(float)
+    return filtered, {
+        "available": True,
+        "input_rows": int(len(events)),
+        "retained_rows": int(retained.sum()),
+        "excluded_rows": int((~retained).sum()),
+        "max_accuracy_km": float(max_accuracy_km),
+    }
+
+
 def main():
     df = load_raw()
     print(f"NASA Global Landslide Catalog → {len(df)} records")
@@ -76,6 +112,19 @@ def main():
 
     india["state"] = india["state"].astype(str).str.strip()
     target = india[india["state"].isin(TARGET_STATES)].copy()
+    target, accuracy_summary = filter_accurate_events(target)
+    if accuracy_summary["available"]:
+        print(
+            "Location accuracy <= "
+            f"{MAX_LOCATION_ACCURACY_KM:g} km: "
+            f"{accuracy_summary['retained_rows']}/{accuracy_summary['input_rows']} "
+            "events retained; unmeasured/less-accurate records excluded."
+        )
+    else:
+        print(
+            "Location accuracy unavailable; no events were filtered. "
+            "Available event columns: " + ", ".join(target.columns)
+        )
     target["region"] = target["state"].apply(region_for_state)
 
     target.to_csv(OUTPUT_CSV, index=False)

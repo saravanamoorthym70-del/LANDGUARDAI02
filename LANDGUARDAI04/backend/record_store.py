@@ -69,6 +69,39 @@ def init_db() -> None:
             "CREATE INDEX IF NOT EXISTS idx_live_records_captured_at "
             "ON live_records (captured_at DESC)"
         )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS risk_grid_cells (
+                cell_id TEXT PRIMARY KEY,
+                grid_size_m INTEGER NOT NULL,
+                latitude REAL NOT NULL,
+                longitude REAL NOT NULL,
+                district TEXT,
+                state TEXT,
+                risk_score REAL NOT NULL,
+                risk_band TEXT NOT NULL,
+                inputs_json TEXT NOT NULL,
+                geometry_json TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            "CREATE INDEX IF NOT EXISTS idx_risk_grid_bbox "
+            "ON risk_grid_cells (grid_size_m, longitude, latitude)"
+        )
+        connection.execute(
+            "CREATE INDEX IF NOT EXISTS idx_risk_grid_district "
+            "ON risk_grid_cells (grid_size_m, state, district, risk_score DESC)"
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS risk_grid_metadata (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+            """
+        )
 
 
 def create_record(record: dict[str, Any]) -> dict[str, Any]:
@@ -151,3 +184,139 @@ def get_record(record_id: str) -> dict[str, Any] | None:
 def delete_all_records() -> None:
     with _connect() as connection:
         connection.execute("DELETE FROM live_records")
+
+
+def get_fresh_risk_grid_cell_ids(
+    cell_ids: list[str], grid_size_m: int, fresh_after: str
+) -> set[str]:
+    fresh_ids: set[str] = set()
+    with _connect() as connection:
+        for offset in range(0, len(cell_ids), 500):
+            batch = cell_ids[offset : offset + 500]
+            if not batch:
+                continue
+            placeholders = ",".join("?" for _ in batch)
+            rows = connection.execute(
+                f"SELECT cell_id FROM risk_grid_cells "
+                f"WHERE grid_size_m = ? AND updated_at >= ? "
+                f"AND cell_id IN ({placeholders})",
+                (grid_size_m, fresh_after, *batch),
+            ).fetchall()
+            fresh_ids.update(row["cell_id"] for row in rows)
+    return fresh_ids
+
+
+def save_risk_grid_cells(cells: list[dict[str, Any]]) -> None:
+    if not cells:
+        return
+    with _connect() as connection:
+        connection.executemany(
+            """
+            INSERT INTO risk_grid_cells (
+                cell_id, grid_size_m, latitude, longitude, district, state,
+                risk_score, risk_band, inputs_json, geometry_json, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(cell_id) DO UPDATE SET
+                grid_size_m = excluded.grid_size_m,
+                latitude = excluded.latitude,
+                longitude = excluded.longitude,
+                district = excluded.district,
+                state = excluded.state,
+                risk_score = excluded.risk_score,
+                risk_band = excluded.risk_band,
+                inputs_json = excluded.inputs_json,
+                geometry_json = excluded.geometry_json,
+                updated_at = excluded.updated_at
+            """,
+            [
+                (
+                    cell["cell_id"],
+                    cell["grid_size_m"],
+                    cell["latitude"],
+                    cell["longitude"],
+                    cell.get("district"),
+                    cell.get("state"),
+                    cell["risk_score"],
+                    cell["risk_band"],
+                    json.dumps(cell["inputs"], allow_nan=False),
+                    json.dumps(cell["geometry"], allow_nan=False),
+                    cell["updated_at"],
+                )
+                for cell in cells
+            ],
+        )
+
+
+def set_risk_grid_metadata(metadata: dict[str, Any]) -> None:
+    with _connect() as connection:
+        connection.execute(
+            "INSERT INTO risk_grid_metadata (key, value) VALUES ('active', ?) "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+            (json.dumps(metadata, allow_nan=False),),
+        )
+
+
+def get_risk_grid_metadata() -> dict[str, Any] | None:
+    with _connect() as connection:
+        row = connection.execute(
+            "SELECT value FROM risk_grid_metadata WHERE key = 'active'"
+        ).fetchone()
+    return json.loads(row["value"]) if row else None
+
+
+def get_risk_grid_cells(
+    grid_size_m: int,
+    bbox: tuple[float, float, float, float] | None,
+    limit: int,
+) -> list[dict[str, Any]]:
+    query = "SELECT * FROM risk_grid_cells WHERE grid_size_m = ?"
+    parameters: list[Any] = [grid_size_m]
+    if bbox is not None:
+        min_lon, min_lat, max_lon, max_lat = bbox
+        query += " AND longitude BETWEEN ? AND ? AND latitude BETWEEN ? AND ?"
+        parameters.extend((min_lon, max_lon, min_lat, max_lat))
+    query += " ORDER BY risk_score DESC, updated_at DESC LIMIT ?"
+    parameters.append(limit)
+
+    with _connect() as connection:
+        rows = connection.execute(query, parameters).fetchall()
+
+    cells = []
+    for row in rows:
+        cell = dict(row)
+        cell["inputs"] = json.loads(cell.pop("inputs_json"))
+        cell["geometry"] = json.loads(cell.pop("geometry_json"))
+        cells.append(cell)
+    return cells
+
+
+def get_risk_grid_district_summary(
+    grid_size_m: int, limit: int = 10
+) -> list[dict[str, Any]]:
+    with _connect() as connection:
+        rows = connection.execute(
+            """
+            SELECT district, state, COUNT(*) AS cell_count,
+                SUM(CASE WHEN risk_band = 'HIGH' THEN 1 ELSE 0 END) AS high_cells,
+                MAX(risk_score) AS max_score,
+                AVG(risk_score) AS mean_score,
+                MAX(updated_at) AS updated_at
+            FROM risk_grid_cells
+            WHERE grid_size_m = ? AND district IS NOT NULL
+            GROUP BY state, district
+            ORDER BY max_score DESC, high_cells DESC, mean_score DESC, district
+            LIMIT ?
+            """,
+            (grid_size_m, limit),
+        ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def get_risk_grid_last_updated(grid_size_m: int) -> str | None:
+    with _connect() as connection:
+        row = connection.execute(
+            "SELECT MAX(updated_at) AS updated_at FROM risk_grid_cells "
+            "WHERE grid_size_m = ?",
+            (grid_size_m,),
+        ).fetchone()
+    return row["updated_at"] if row else None

@@ -1,6 +1,6 @@
 {
   "file": "C:\\Users\\Dell\\Downloads\\LANDGUARDAI04\\LANDGUARDAI04\\ml\\dataset\\LANDGUARD_FINAL_DATASET.csv",
-  "rows": 1039,
+  "rows": 728,
   "columns": [
     "rainfall_1d_mm",
     "rainfall_3d_mm",
@@ -16,7 +16,11 @@
     "event_date",
     "sample_date",
     "sample_type",
-    "slope_deg"
+    "location_accuracy",
+    "location_accuracy_km",
+    "slope_deg",
+    "distance_to_road_km",
+    "distance_to_settlement_km"
   ],
   "checks": {
     "missing_values": {
@@ -32,9 +36,13 @@
       "region": 0,
       "event_id": 649,
       "event_date": 649,
-      "sample_date": 390,
+      "sample_date": 79,
       "sample_type": 0,
-      "slope_deg": 1039
+      "location_accuracy": 649,
+      "location_accuracy_km": 649,
+      "slope_deg": 109,
+      "distance_to_road_km": 90,
+      "distance_to_settlement_km": 91
     },
     "required_missing_values": {
       "rainfall_1d_mm": 0,
@@ -45,27 +53,260 @@
       "risk": 0
     },
     "optional_slope_coverage": {
-      "available_rows": 0,
-      "missing_rows": 1039
+      "available_rows": 619,
+      "missing_rows": 109,
+      "source_note": "Approximate 3x3 Open-Meteo elevation-grid gradient; not a 30 m DEM product."
+    },
+    "event_location_accuracy": {
+      "max_accuracy_km": 1.0,
+      "positive_rows": 79,
+      "measured_positive_rows": 79,
+      "outside_threshold_rows": 0,
+      "source_field": "NASA Global Landslide Catalog location_accuracy"
+    },
+    "temporal_negative_rows": {
+      "count": 0,
+      "available": false
+    },
+    "requested_feature_availability": {
+      "aspect_deg": {
+        "available_rows": 0,
+        "present": false
+      },
+      "curvature": {
+        "available_rows": 0,
+        "present": false
+      },
+      "twi": {
+        "available_rows": 0,
+        "present": false
+      },
+      "rainfall_14d_mm": {
+        "available_rows": 0,
+        "present": false
+      },
+      "rainfall_30d_mm": {
+        "available_rows": 0,
+        "present": false
+      },
+      "antecedent_precipitation_index": {
+        "available_rows": 0,
+        "present": false
+      },
+      "rainfall_intensity": {
+        "available_rows": 0,
+        "present": false
+      },
+      "ndvi": {
+        "available_rows": 0,
+        "present": false
+      },
+      "landcover_class": {
+        "available_rows": 0,
+        "present": false
+      },
+      "lithology": {
+        "available_rows": 0,
+        "present": false
+      },
+      "distance_to_river_km": {
+        "available_rows": 0,
+        "present": false
+      },
+      "distance_to_fault_km": {
+        "available_rows": 0,
+        "present": false
+      },
+      "distance_to_road_km": {
+        "available_rows": 638,
+        "present": true
+      },
+      "distance_to_settlement_km": {
+        "available_rows": 637,
+        "present": true
+      }
+    },
+    "spatial_reporting_proximity": {
+      "distance_to_road_km": {
+        "available_rows": 638,
+        "event_median_km": 0.027024601946132848,
+        "background_median_km": 1.181398207784457,
+        "source": "OpenStreetMap regional PBF extracts; <=20 km nearest-feature search."
+      },
+      "distance_to_settlement_km": {
+        "available_rows": 637,
+        "event_median_km": 0.6300377379017348,
+        "background_median_km": 3.607978693875484,
+        "source": "OpenStreetMap regional PBF extracts; <=20 km nearest-feature search."
+      }
     },
     "duplicates": 0,
     "class_counts": {
       "0": 649,
-      "1": 390
+      "1": 79
     },
+    "coverage_by_region_state": [
+      {
+        "region": "NER",
+        "state": "Arunachal Pradesh",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Arunachal Pradesh",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 3
+      },
+      {
+        "region": "NER",
+        "state": "Assam",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Assam",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 15
+      },
+      {
+        "region": "NER",
+        "state": "Manipur",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Manipur",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 3
+      },
+      {
+        "region": "NER",
+        "state": "Meghalaya",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Meghalaya",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 5
+      },
+      {
+        "region": "NER",
+        "state": "Mizoram",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Mizoram",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 6
+      },
+      {
+        "region": "NER",
+        "state": "Nagaland",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Nagaland",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 4
+      },
+      {
+        "region": "NER",
+        "state": "Sikkim",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "NER",
+        "state": "Sikkim",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 4
+      },
+      {
+        "region": "NER",
+        "state": "Tripura",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 75
+      },
+      {
+        "region": "SOUTH",
+        "state": "Andhra Pradesh",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 10
+      },
+      {
+        "region": "SOUTH",
+        "state": "Karnataka",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 3
+      },
+      {
+        "region": "SOUTH",
+        "state": "Kerala",
+        "sample_type": "background",
+        "risk": 0,
+        "rows": 49
+      },
+      {
+        "region": "SOUTH",
+        "state": "Kerala",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 12
+      },
+      {
+        "region": "SOUTH",
+        "state": "Tamil Nadu",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 13
+      },
+      {
+        "region": "SOUTH",
+        "state": "Telangana",
+        "sample_type": "historical_event",
+        "risk": 1,
+        "rows": 1
+      }
+    ],
     "feature_ranges": {
       "rainfall_1d_mm": {
         "min": 0.0,
-        "max": 199.7,
-        "mean": 22.652358036573627,
+        "max": 133.4,
+        "mean": 21.834340659340658,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 2000
       },
       "rainfall_3d_mm": {
         "min": 0.0,
-        "max": 406.6,
-        "mean": 72.42531280076996,
+        "max": 378.2,
+        "mean": 68.53997252747253,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 3000
@@ -73,15 +314,15 @@
       "rainfall_7d_mm": {
         "min": 0.0,
         "max": 749.2,
-        "mean": 143.88402309913377,
+        "mean": 139.34478021978023,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 4000
       },
       "soil_moisture_0_7cm": {
-        "min": 0.133,
-        "max": 0.52,
-        "mean": 0.4409607566799578,
+        "min": 0.202,
+        "max": 0.516,
+        "mean": 0.44205388212977503,
         "out_of_range_count": 0,
         "expected_min": 0,
         "expected_max": 1
@@ -89,7 +330,7 @@
       "elevation_m": {
         "min": 0.0,
         "max": 6472.0,
-        "mean": 969.1953801732435,
+        "mean": 1061.3365384615386,
         "out_of_range_count": 0,
         "expected_min": -500,
         "expected_max": 9000
@@ -99,6 +340,6 @@
       "r1_gt_r3_count": 0,
       "r3_gt_r7_count": 0
     },
-    "quality_status": "PASS"
+    "quality_status": "REVIEW"
   }
 }
