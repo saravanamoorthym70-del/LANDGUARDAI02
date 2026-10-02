@@ -1,5 +1,6 @@
 {
   "selected_model": "hist_gradient_boosting",
+  "selection_objective": "mean_state_average_precision",
   "validation_method": "leave_one_state_out",
   "validation_rows": 1039,
   "state_count": 13,
@@ -8,6 +9,86 @@
     "1": 390
   },
   "threshold_for_metrics": 0.5,
+  "alert_threshold": 0.7,
+  "spatial_validation": {
+    "method": "5-fold grouped validation with 0.5-degree coordinate blocks",
+    "rows": 1039,
+    "class_counts": {
+      "0": 649,
+      "1": 390
+    },
+    "roc_auc": 0.722895183912133,
+    "average_precision": 0.6121060083831493,
+    "brier_score": 0.20877098120689544,
+    "metrics_at_0_5": {
+      "threshold": 0.5,
+      "accuracy": 0.687199230028874,
+      "balanced_accuracy": 0.6447295642210896,
+      "precision": 0.6065573770491803,
+      "recall": 0.47435897435897434,
+      "f1": 0.5323741007194245,
+      "false_positive_rate": 0.18489984591679506,
+      "true_negative": 529,
+      "false_positive": 120,
+      "false_negative": 205,
+      "true_positive": 185
+    },
+    "metrics_at_alert_threshold": {
+      "threshold": 0.7,
+      "accuracy": 0.6843118383060636,
+      "balanced_accuracy": 0.6030224013274861,
+      "precision": 0.7012987012987013,
+      "recall": 0.27692307692307694,
+      "f1": 0.39705882352941174,
+      "false_positive_rate": 0.07087827426810478,
+      "true_negative": 603,
+      "false_positive": 46,
+      "false_negative": 282,
+      "true_positive": 108
+    }
+  },
+  "temporal_validation": {
+    "available": true,
+    "method": "chronological 80/20 holdout; model selected using training period only",
+    "cutoff": "2015-08-19",
+    "selected_model": "hist_gradient_boosting",
+    "train_rows": 841,
+    "test_rows": 198,
+    "rows": 198,
+    "class_counts": {
+      "0": 126,
+      "1": 72
+    },
+    "roc_auc": 0.7922178130511465,
+    "average_precision": 0.7204762228545559,
+    "brier_score": 0.17612233873342203,
+    "metrics_at_0_5": {
+      "threshold": 0.5,
+      "accuracy": 0.7272727272727273,
+      "balanced_accuracy": 0.6934523809523809,
+      "precision": 0.640625,
+      "recall": 0.5694444444444444,
+      "f1": 0.6029411764705882,
+      "false_positive_rate": 0.18253968253968253,
+      "true_negative": 103,
+      "false_positive": 23,
+      "false_negative": 31,
+      "true_positive": 41
+    },
+    "metrics_at_alert_threshold": {
+      "threshold": 0.7,
+      "accuracy": 0.7323232323232324,
+      "balanced_accuracy": 0.6527777777777778,
+      "precision": 0.7878787878787878,
+      "recall": 0.3611111111111111,
+      "f1": 0.49523809523809526,
+      "false_positive_rate": 0.05555555555555555,
+      "true_negative": 119,
+      "false_positive": 7,
+      "false_negative": 46,
+      "true_positive": 26
+    }
+  },
   "score_semantics": "screening score; not a calibrated event probability",
   "models": {
     "logistic_regression": {
@@ -17,14 +98,28 @@
       "precision": 0.3252032520325203,
       "recall": 0.10256410256410256,
       "f1": 0.15594541910331383,
-      "roc_auc": 0.5111769586345857,
-      "average_precision": 0.3710971388905647,
-      "brier_score": 0.24259893490652837,
       "false_positive_rate": 0.12788906009244994,
       "true_negative": 566,
       "false_positive": 83,
       "false_negative": 350,
       "true_positive": 40,
+      "roc_auc": 0.5111769586345857,
+      "average_precision": 0.3710971388905647,
+      "brier_score": 0.24259893490652837,
+      "alert_threshold": 0.7,
+      "alert_metrics": {
+        "threshold": 0.7,
+        "accuracy": 0.6246390760346487,
+        "balanced_accuracy": 0.501534905772194,
+        "precision": 0.5,
+        "recall": 0.007692307692307693,
+        "f1": 0.015151515151515152,
+        "false_positive_rate": 0.004622496147919877,
+        "true_negative": 646,
+        "false_positive": 3,
+        "false_negative": 387,
+        "true_positive": 3
+      },
       "held_out_states": [
         "Andhra Pradesh",
         "Arunachal Pradesh",
@@ -40,73 +135,505 @@
         "Telangana",
         "Tripura"
       ],
-      "mean_state_balanced_accuracy": 0.4671329943106946,
-      "mean_state_average_precision": 0.5640552678173532,
+      "states_excluded_from_state_means": [
+        "Andhra Pradesh",
+        "Karnataka",
+        "Tamil Nadu",
+        "Telangana"
+      ],
+      "mean_state_balanced_accuracy": 0.501531585232708,
+      "mean_state_average_precision": 0.3703020535139545,
+      "mean_state_alert_precision": 0.05555555555555555,
       "per_state_metrics": {
         "Andhra Pradesh": {
           "rows": 21,
-          "balanced_accuracy": 0.19047619047619047,
-          "average_precision": 1.0000000000000002
+          "class_counts": {
+            "1": 21
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.2999633473864032,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.19047619047619047,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.19047619047619047,
+            "f1": 0.32,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 17,
+            "true_positive": 4
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 21,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Arunachal Pradesh": {
           "rows": 95,
-          "balanced_accuracy": 0.5549999999999999,
-          "average_precision": 0.3394968164609135
+          "class_counts": {
+            "0": 75,
+            "1": 20
+          },
+          "roc_auc": 0.6246666666666667,
+          "average_precision": 0.3394968164609135,
+          "brier_score": 0.1785307819896062,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7894736842105263,
+            "balanced_accuracy": 0.5549999999999999,
+            "precision": 0.5,
+            "recall": 0.15,
+            "f1": 0.23076923076923078,
+            "false_positive_rate": 0.04,
+            "true_negative": 72,
+            "false_positive": 3,
+            "false_negative": 17,
+            "true_positive": 3
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7894736842105263,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 20,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5549999999999999
         },
         "Assam": {
           "rows": 157,
-          "balanced_accuracy": 0.4821138211382114,
-          "average_precision": 0.4979089028334554
+          "class_counts": {
+            "1": 82,
+            "0": 75
+          },
+          "roc_auc": 0.4741463414634146,
+          "average_precision": 0.4979089028334554,
+          "brier_score": 0.28453862247996436,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.46496815286624205,
+            "balanced_accuracy": 0.4821138211382114,
+            "precision": 0.4444444444444444,
+            "recall": 0.0975609756097561,
+            "f1": 0.16,
+            "false_positive_rate": 0.13333333333333333,
+            "true_negative": 65,
+            "false_positive": 10,
+            "false_negative": 74,
+            "true_positive": 8
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.47770700636942676,
+            "balanced_accuracy": 0.49829268292682927,
+            "precision": 0.5,
+            "recall": 0.036585365853658534,
+            "f1": 0.06818181818181818,
+            "false_positive_rate": 0.04,
+            "true_negative": 72,
+            "false_positive": 3,
+            "false_negative": 79,
+            "true_positive": 3
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.4821138211382114
         },
         "Karnataka": {
           "rows": 30,
-          "balanced_accuracy": 0.23333333333333334,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 30
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.3502947046582131,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.23333333333333334,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.23333333333333334,
+            "f1": 0.3783783783783784,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 23,
+            "true_positive": 7
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 30,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Kerala": {
           "rows": 99,
-          "balanced_accuracy": 0.5191836734693878,
-          "average_precision": 0.5883571976796002
+          "class_counts": {
+            "1": 50,
+            "0": 49
+          },
+          "roc_auc": 0.5808163265306122,
+          "average_precision": 0.5883571976796002,
+          "brier_score": 0.26136016189215716,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5151515151515151,
+            "balanced_accuracy": 0.5191836734693878,
+            "precision": 0.6,
+            "recall": 0.12,
+            "f1": 0.2,
+            "false_positive_rate": 0.08163265306122448,
+            "true_negative": 45,
+            "false_positive": 4,
+            "false_negative": 44,
+            "true_positive": 6
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.494949494949495,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 49,
+            "false_positive": 0,
+            "false_negative": 50,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5191836734693878
         },
         "Manipur": {
           "rows": 131,
-          "balanced_accuracy": 0.5178571428571429,
-          "average_precision": 0.39011617519874286
+          "class_counts": {
+            "0": 75,
+            "1": 56
+          },
+          "roc_auc": 0.40071428571428575,
+          "average_precision": 0.39011617519874286,
+          "brier_score": 0.2614984151317327,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5877862595419847,
+            "balanced_accuracy": 0.5178571428571429,
+            "precision": 1.0,
+            "recall": 0.03571428571428571,
+            "f1": 0.06896551724137931,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 54,
+            "true_positive": 2
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.5725190839694656,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 56,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5178571428571429
         },
         "Meghalaya": {
           "rows": 93,
-          "balanced_accuracy": 0.5077777777777778,
-          "average_precision": 0.37152565404238225
+          "class_counts": {
+            "0": 75,
+            "1": 18
+          },
+          "roc_auc": 0.7407407407407407,
+          "average_precision": 0.37152565404238225,
+          "brier_score": 0.19225513643273745,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7849462365591398,
+            "balanced_accuracy": 0.5077777777777778,
+            "precision": 0.25,
+            "recall": 0.05555555555555555,
+            "f1": 0.09090909090909091,
+            "false_positive_rate": 0.04,
+            "true_negative": 72,
+            "false_positive": 3,
+            "false_negative": 17,
+            "true_positive": 1
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8064516129032258,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 18,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5077777777777778
         },
         "Mizoram": {
           "rows": 102,
-          "balanced_accuracy": 0.43851851851851853,
-          "average_precision": 0.19054421819821218
+          "class_counts": {
+            "0": 75,
+            "1": 27
+          },
+          "roc_auc": 0.2187654320987654,
+          "average_precision": 0.19054421819821218,
+          "brier_score": 0.24775896515960935,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6274509803921569,
+            "balanced_accuracy": 0.43851851851851853,
+            "precision": 0.07692307692307693,
+            "recall": 0.037037037037037035,
+            "f1": 0.05,
+            "false_positive_rate": 0.16,
+            "true_negative": 63,
+            "false_positive": 12,
+            "false_negative": 26,
+            "true_positive": 1
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7352941176470589,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 27,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.43851851851851853
         },
         "Nagaland": {
           "rows": 89,
-          "balanced_accuracy": 0.5,
-          "average_precision": 0.11709036840251816
+          "class_counts": {
+            "0": 75,
+            "1": 14
+          },
+          "roc_auc": 0.32,
+          "average_precision": 0.11709036840251816,
+          "brier_score": 0.17207777507652755,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.8426966292134831,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 14,
+            "true_positive": 0
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8426966292134831,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 14,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5
         },
         "Sikkim": {
           "rows": 106,
-          "balanced_accuracy": 0.5,
-          "average_precision": 0.7771056721072572
+          "class_counts": {
+            "0": 75,
+            "1": 31
+          },
+          "roc_auc": 0.8817204301075269,
+          "average_precision": 0.7771056721072572,
+          "brier_score": 0.16561571229058605,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7075471698113207,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 31,
+            "true_positive": 0
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7075471698113207,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 31,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5
         },
         "Tamil Nadu": {
           "rows": 37,
-          "balanced_accuracy": 0.13513513513513514,
-          "average_precision": 0.9999999999999998
+          "class_counts": {
+            "1": 37
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.40023488353643966,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.13513513513513514,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.13513513513513514,
+            "f1": 0.23809523809523808,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 32,
+            "true_positive": 5
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 37,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Telangana": {
           "rows": 1,
-          "balanced_accuracy": 1.0,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 1
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.2210182985694004,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 0,
+            "true_positive": 1
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 1,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Tripura": {
           "rows": 78,
-          "balanced_accuracy": 0.4933333333333333,
-          "average_precision": 0.060573476702508955
+          "class_counts": {
+            "0": 75,
+            "1": 3
+          },
+          "roc_auc": 0.52,
+          "average_precision": 0.060573476702508955,
+          "brier_score": 0.2876570114938343,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.3333333333333333,
+            "balanced_accuracy": 0.4933333333333333,
+            "precision": 0.03773584905660377,
+            "recall": 0.6666666666666666,
+            "f1": 0.07142857142857142,
+            "false_positive_rate": 0.68,
+            "true_negative": 24,
+            "false_positive": 51,
+            "false_negative": 1,
+            "true_positive": 2
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.9615384615384616,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 3,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.4933333333333333
         }
       }
     },
@@ -117,14 +644,28 @@
       "precision": 0.5252808988764045,
       "recall": 0.4794871794871795,
       "f1": 0.5013404825737265,
-      "roc_auc": 0.6586385366046383,
-      "average_precision": 0.5125357507232025,
-      "brier_score": 0.22679379179714942,
       "false_positive_rate": 0.26040061633281975,
       "true_negative": 480,
       "false_positive": 169,
       "false_negative": 203,
       "true_positive": 187,
+      "roc_auc": 0.6586385366046383,
+      "average_precision": 0.5125357507232025,
+      "brier_score": 0.22679379179714942,
+      "alert_threshold": 0.7,
+      "alert_metrics": {
+        "threshold": 0.7,
+        "accuracy": 0.6400384985563041,
+        "balanced_accuracy": 0.5414898660661372,
+        "precision": 0.5816326530612245,
+        "recall": 0.14615384615384616,
+        "f1": 0.2336065573770492,
+        "false_positive_rate": 0.06317411402157165,
+        "true_negative": 608,
+        "false_positive": 41,
+        "false_negative": 333,
+        "true_positive": 57
+      },
       "held_out_states": [
         "Andhra Pradesh",
         "Arunachal Pradesh",
@@ -140,73 +681,505 @@
         "Telangana",
         "Tripura"
       ],
-      "mean_state_balanced_accuracy": 0.6278684391773073,
-      "mean_state_average_precision": 0.6233559535527463,
+      "states_excluded_from_state_means": [
+        "Andhra Pradesh",
+        "Karnataka",
+        "Tamil Nadu",
+        "Telangana"
+      ],
+      "mean_state_balanced_accuracy": 0.6225223944129817,
+      "mean_state_average_precision": 0.45595859957618906,
+      "mean_state_alert_precision": 0.4962962962962963,
       "per_state_metrics": {
         "Andhra Pradesh": {
           "rows": 21,
-          "balanced_accuracy": 0.6190476190476191,
-          "average_precision": 1.0000000000000002
+          "class_counts": {
+            "1": 21
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.29577213709944644,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6190476190476191,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.6190476190476191,
+            "f1": 0.7647058823529411,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 8,
+            "true_positive": 13
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.19047619047619047,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.19047619047619047,
+            "f1": 0.32,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 17,
+            "true_positive": 4
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Arunachal Pradesh": {
           "rows": 95,
-          "balanced_accuracy": 0.6416666666666666,
-          "average_precision": 0.4595999460529009
+          "class_counts": {
+            "0": 75,
+            "1": 20
+          },
+          "roc_auc": 0.6773333333333333,
+          "average_precision": 0.4595999460529009,
+          "brier_score": 0.20167634305252535,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6947368421052632,
+            "balanced_accuracy": 0.6416666666666666,
+            "precision": 0.3548387096774194,
+            "recall": 0.55,
+            "f1": 0.43137254901960786,
+            "false_positive_rate": 0.26666666666666666,
+            "true_negative": 55,
+            "false_positive": 20,
+            "false_negative": 9,
+            "true_positive": 11
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8421052631578947,
+            "balanced_accuracy": 0.6616666666666666,
+            "precision": 0.7777777777777778,
+            "recall": 0.35,
+            "f1": 0.4827586206896552,
+            "false_positive_rate": 0.02666666666666667,
+            "true_negative": 73,
+            "false_positive": 2,
+            "false_negative": 13,
+            "true_positive": 7
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6416666666666666
         },
         "Assam": {
           "rows": 157,
-          "balanced_accuracy": 0.5461788617886179,
-          "average_precision": 0.5972391063612543
+          "class_counts": {
+            "1": 82,
+            "0": 75
+          },
+          "roc_auc": 0.6416260162601626,
+          "average_precision": 0.5972391063612543,
+          "brier_score": 0.26065070638338206,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5414012738853503,
+            "balanced_accuracy": 0.5461788617886179,
+            "precision": 0.5806451612903226,
+            "recall": 0.43902439024390244,
+            "f1": 0.5,
+            "false_positive_rate": 0.3466666666666667,
+            "true_negative": 49,
+            "false_positive": 26,
+            "false_negative": 46,
+            "true_positive": 36
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.46496815286624205,
+            "balanced_accuracy": 0.4786991869918699,
+            "precision": 0.4666666666666667,
+            "recall": 0.17073170731707318,
+            "f1": 0.25,
+            "false_positive_rate": 0.21333333333333335,
+            "true_negative": 59,
+            "false_positive": 16,
+            "false_negative": 68,
+            "true_positive": 14
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5461788617886179
         },
         "Karnataka": {
           "rows": 30,
-          "balanced_accuracy": 0.4,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 30
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.3497524163035601,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.4,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.4,
+            "f1": 0.5714285714285714,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 18,
+            "true_positive": 12
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.13333333333333333,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.13333333333333333,
+            "f1": 0.23529411764705882,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 26,
+            "true_positive": 4
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Kerala": {
           "rows": 99,
-          "balanced_accuracy": 0.5975510204081632,
-          "average_precision": 0.676086387417768
+          "class_counts": {
+            "1": 50,
+            "0": 49
+          },
+          "roc_auc": 0.656734693877551,
+          "average_precision": 0.676086387417768,
+          "brier_score": 0.24745923046817295,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5959595959595959,
+            "balanced_accuracy": 0.5975510204081632,
+            "precision": 0.6470588235294118,
+            "recall": 0.44,
+            "f1": 0.5238095238095238,
+            "false_positive_rate": 0.24489795918367346,
+            "true_negative": 37,
+            "false_positive": 12,
+            "false_negative": 28,
+            "true_positive": 22
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.5353535353535354,
+            "balanced_accuracy": 0.539795918367347,
+            "precision": 0.8333333333333334,
+            "recall": 0.1,
+            "f1": 0.17857142857142858,
+            "false_positive_rate": 0.02040816326530612,
+            "true_negative": 48,
+            "false_positive": 1,
+            "false_negative": 45,
+            "true_positive": 5
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5975510204081632
         },
         "Manipur": {
           "rows": 131,
-          "balanced_accuracy": 0.5947619047619048,
-          "average_precision": 0.6252968946350976
+          "class_counts": {
+            "0": 75,
+            "1": 56
+          },
+          "roc_auc": 0.6621428571428571,
+          "average_precision": 0.6252968946350976,
+          "brier_score": 0.22633014249592645,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5877862595419847,
+            "balanced_accuracy": 0.5947619047619048,
+            "precision": 0.5142857142857142,
+            "recall": 0.6428571428571429,
+            "f1": 0.5714285714285714,
+            "false_positive_rate": 0.4533333333333333,
+            "true_negative": 41,
+            "false_positive": 34,
+            "false_negative": 20,
+            "true_positive": 36
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.6335877862595419,
+            "balanced_accuracy": 0.575952380952381,
+            "precision": 0.8333333333333334,
+            "recall": 0.17857142857142858,
+            "f1": 0.29411764705882354,
+            "false_positive_rate": 0.02666666666666667,
+            "true_negative": 73,
+            "false_positive": 2,
+            "false_negative": 46,
+            "true_positive": 10
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5947619047619048
         },
         "Meghalaya": {
           "rows": 93,
-          "balanced_accuracy": 0.7455555555555555,
-          "average_precision": 0.47475883170327615
+          "class_counts": {
+            "0": 75,
+            "1": 18
+          },
+          "roc_auc": 0.7525925925925926,
+          "average_precision": 0.47475883170327615,
+          "brier_score": 0.1718075606602892,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.8279569892473119,
+            "balanced_accuracy": 0.7455555555555555,
+            "precision": 0.55,
+            "recall": 0.6111111111111112,
+            "f1": 0.5789473684210527,
+            "false_positive_rate": 0.12,
+            "true_negative": 66,
+            "false_positive": 9,
+            "false_negative": 7,
+            "true_positive": 11
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8172043010752689,
+            "balanced_accuracy": 0.6122222222222222,
+            "precision": 0.5555555555555556,
+            "recall": 0.2777777777777778,
+            "f1": 0.37037037037037035,
+            "false_positive_rate": 0.05333333333333334,
+            "true_negative": 71,
+            "false_positive": 4,
+            "false_negative": 13,
+            "true_positive": 5
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.7455555555555555
         },
         "Mizoram": {
           "rows": 102,
-          "balanced_accuracy": 0.5762962962962963,
-          "average_precision": 0.44278595963892775
+          "class_counts": {
+            "0": 75,
+            "1": 27
+          },
+          "roc_auc": 0.7387654320987654,
+          "average_precision": 0.44278595963892775,
+          "brier_score": 0.18193176560341665,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7254901960784313,
+            "balanced_accuracy": 0.5762962962962963,
+            "precision": 0.4666666666666667,
+            "recall": 0.25925925925925924,
+            "f1": 0.3333333333333333,
+            "false_positive_rate": 0.10666666666666667,
+            "true_negative": 67,
+            "false_positive": 8,
+            "false_negative": 20,
+            "true_positive": 7
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7352941176470589,
+            "balanced_accuracy": 0.5118518518518519,
+            "precision": 0.5,
+            "recall": 0.037037037037037035,
+            "f1": 0.06896551724137931,
+            "false_positive_rate": 0.013333333333333334,
+            "true_negative": 74,
+            "false_positive": 1,
+            "false_negative": 26,
+            "true_positive": 1
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5762962962962963
         },
         "Nagaland": {
           "rows": 89,
-          "balanced_accuracy": 0.5338095238095238,
-          "average_precision": 0.28429214966994715
+          "class_counts": {
+            "0": 75,
+            "1": 14
+          },
+          "roc_auc": 0.7057142857142857,
+          "average_precision": 0.28429214966994715,
+          "brier_score": 0.16274554081557663,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7528089887640449,
+            "balanced_accuracy": 0.5338095238095238,
+            "precision": 0.21428571428571427,
+            "recall": 0.21428571428571427,
+            "f1": 0.21428571428571427,
+            "false_positive_rate": 0.14666666666666667,
+            "true_negative": 64,
+            "false_positive": 11,
+            "false_negative": 11,
+            "true_positive": 3
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8314606741573034,
+            "balanced_accuracy": 0.5223809523809524,
+            "precision": 0.3333333333333333,
+            "recall": 0.07142857142857142,
+            "f1": 0.11764705882352941,
+            "false_positive_rate": 0.02666666666666667,
+            "true_negative": 73,
+            "false_positive": 2,
+            "false_negative": 13,
+            "true_positive": 1
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5338095238095238
         },
         "Sikkim": {
           "rows": 106,
-          "balanced_accuracy": 0.6268817204301076,
-          "average_precision": 0.44982610282658064
+          "class_counts": {
+            "0": 75,
+            "1": 31
+          },
+          "roc_auc": 0.6834408602150538,
+          "average_precision": 0.44982610282658064,
+          "brier_score": 0.2096613201189313,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7264150943396226,
+            "balanced_accuracy": 0.6268817204301076,
+            "precision": 0.5454545454545454,
+            "recall": 0.3870967741935484,
+            "f1": 0.4528301886792453,
+            "false_positive_rate": 0.13333333333333333,
+            "true_negative": 65,
+            "false_positive": 10,
+            "false_negative": 19,
+            "true_positive": 12
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.6698113207547169,
+            "balanced_accuracy": 0.4827956989247312,
+            "precision": 0.16666666666666666,
+            "recall": 0.03225806451612903,
+            "f1": 0.05405405405405406,
+            "false_positive_rate": 0.06666666666666667,
+            "true_negative": 70,
+            "false_positive": 5,
+            "false_negative": 30,
+            "true_positive": 1
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6268817204301076
         },
         "Tamil Nadu": {
           "rows": 37,
-          "balanced_accuracy": 0.5405405405405406,
-          "average_precision": 0.9999999999999998
+          "class_counts": {
+            "1": 37
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.364367929740766,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5405405405405406,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.5405405405405406,
+            "f1": 0.7017543859649122,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 17,
+            "true_positive": 20
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.10810810810810811,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.10810810810810811,
+            "f1": 0.1951219512195122,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 33,
+            "true_positive": 4
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Telangana": {
           "rows": 1,
-          "balanced_accuracy": 1.0,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 1
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.025949349005348146,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 0,
+            "true_positive": 1
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 1.0,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 0,
+            "true_positive": 1
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Tripura": {
           "rows": 78,
-          "balanced_accuracy": 0.74,
-          "average_precision": 0.09374201787994892
+          "class_counts": {
+            "0": 75,
+            "1": 3
+          },
+          "roc_auc": 0.7511111111111111,
+          "average_precision": 0.09374201787994892,
+          "brier_score": 0.25582919597416093,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5,
+            "balanced_accuracy": 0.74,
+            "precision": 0.07142857142857142,
+            "recall": 1.0,
+            "f1": 0.13333333333333333,
+            "false_positive_rate": 0.52,
+            "true_negative": 36,
+            "false_positive": 39,
+            "false_negative": 0,
+            "true_positive": 3
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8589743589743589,
+            "balanced_accuracy": 0.44666666666666666,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.10666666666666667,
+            "true_negative": 67,
+            "false_positive": 8,
+            "false_negative": 3,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.74
         }
       }
     },
@@ -217,14 +1190,28 @@
       "precision": 0.47577092511013214,
       "recall": 0.27692307692307694,
       "f1": 0.3500810372771475,
-      "roc_auc": 0.6154952392240528,
-      "average_precision": 0.46918623066002463,
-      "brier_score": 0.2271934461680739,
       "false_positive_rate": 0.18335901386748846,
       "true_negative": 530,
       "false_positive": 119,
       "false_negative": 282,
       "true_positive": 108,
+      "roc_auc": 0.6154952392240528,
+      "average_precision": 0.46918623066002463,
+      "brier_score": 0.2271934461680739,
+      "alert_threshold": 0.7,
+      "alert_metrics": {
+        "threshold": 0.7,
+        "accuracy": 0.6265640038498557,
+        "balanced_accuracy": 0.5046106435936945,
+        "precision": 0.6,
+        "recall": 0.015384615384615385,
+        "f1": 0.03,
+        "false_positive_rate": 0.0061633281972265025,
+        "true_negative": 645,
+        "false_positive": 4,
+        "false_negative": 384,
+        "true_positive": 6
+      },
       "held_out_states": [
         "Andhra Pradesh",
         "Arunachal Pradesh",
@@ -240,73 +1227,505 @@
         "Telangana",
         "Tripura"
       ],
-      "mean_state_balanced_accuracy": 0.5455034566159103,
-      "mean_state_average_precision": 0.6235542992023283,
+      "states_excluded_from_state_means": [
+        "Andhra Pradesh",
+        "Karnataka",
+        "Tamil Nadu",
+        "Telangana"
+      ],
+      "mean_state_balanced_accuracy": 0.5748506242352796,
+      "mean_state_average_precision": 0.45624509884780756,
+      "mean_state_alert_precision": 0.15873015873015872,
       "per_state_metrics": {
         "Andhra Pradesh": {
           "rows": 21,
-          "balanced_accuracy": 0.38095238095238093,
-          "average_precision": 1.0000000000000002
+          "class_counts": {
+            "1": 21
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.30222494509191594,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.38095238095238093,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.38095238095238093,
+            "f1": 0.5517241379310345,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 13,
+            "true_positive": 8
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.09523809523809523,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.09523809523809523,
+            "f1": 0.17391304347826086,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 19,
+            "true_positive": 2
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Arunachal Pradesh": {
           "rows": 95,
-          "balanced_accuracy": 0.65,
-          "average_precision": 0.4404017570958797
+          "class_counts": {
+            "0": 75,
+            "1": 20
+          },
+          "roc_auc": 0.6759999999999999,
+          "average_precision": 0.4404017570958797,
+          "brier_score": 0.1927058373829947,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7368421052631579,
+            "balanced_accuracy": 0.65,
+            "precision": 0.4,
+            "recall": 0.5,
+            "f1": 0.4444444444444444,
+            "false_positive_rate": 0.2,
+            "true_negative": 60,
+            "false_positive": 15,
+            "false_negative": 10,
+            "true_positive": 10
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7894736842105263,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 20,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.65
         },
         "Assam": {
           "rows": 157,
-          "balanced_accuracy": 0.5152845528455284,
-          "average_precision": 0.5814976739088782
+          "class_counts": {
+            "1": 82,
+            "0": 75
+          },
+          "roc_auc": 0.6095934959349594,
+          "average_precision": 0.5814976739088782,
+          "brier_score": 0.2628862729277152,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5031847133757962,
+            "balanced_accuracy": 0.5152845528455284,
+            "precision": 0.5555555555555556,
+            "recall": 0.24390243902439024,
+            "f1": 0.3389830508474576,
+            "false_positive_rate": 0.21333333333333335,
+            "true_negative": 59,
+            "false_positive": 16,
+            "false_negative": 62,
+            "true_positive": 20
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.4713375796178344,
+            "balanced_accuracy": 0.4916260162601626,
+            "precision": 0.42857142857142855,
+            "recall": 0.036585365853658534,
+            "f1": 0.06741573033707865,
+            "false_positive_rate": 0.05333333333333334,
+            "true_negative": 71,
+            "false_positive": 4,
+            "false_negative": 79,
+            "true_positive": 3
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5152845528455284
         },
         "Karnataka": {
           "rows": 30,
-          "balanced_accuracy": 0.26666666666666666,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 30
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.3464236732329938,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.26666666666666666,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.26666666666666666,
+            "f1": 0.42105263157894735,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 22,
+            "true_positive": 8
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 30,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Kerala": {
           "rows": 99,
-          "balanced_accuracy": 0.5381632653061225,
-          "average_precision": 0.5909704633322488
+          "class_counts": {
+            "1": 50,
+            "0": 49
+          },
+          "roc_auc": 0.5722448979591837,
+          "average_precision": 0.5909704633322488,
+          "brier_score": 0.2583975939903314,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5353535353535354,
+            "balanced_accuracy": 0.5381632653061225,
+            "precision": 0.5909090909090909,
+            "recall": 0.26,
+            "f1": 0.3611111111111111,
+            "false_positive_rate": 0.1836734693877551,
+            "true_negative": 40,
+            "false_positive": 9,
+            "false_negative": 37,
+            "true_positive": 13
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.494949494949495,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 49,
+            "false_positive": 0,
+            "false_negative": 50,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5381632653061225
         },
         "Manipur": {
           "rows": 131,
-          "balanced_accuracy": 0.5205952380952381,
-          "average_precision": 0.512431139421157
+          "class_counts": {
+            "0": 75,
+            "1": 56
+          },
+          "roc_auc": 0.5392857142857143,
+          "average_precision": 0.512431139421157,
+          "brier_score": 0.24155553149292489,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5572519083969466,
+            "balanced_accuracy": 0.5205952380952381,
+            "precision": 0.46875,
+            "recall": 0.26785714285714285,
+            "f1": 0.3409090909090909,
+            "false_positive_rate": 0.22666666666666666,
+            "true_negative": 58,
+            "false_positive": 17,
+            "false_negative": 41,
+            "true_positive": 15
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.5801526717557252,
+            "balanced_accuracy": 0.5089285714285714,
+            "precision": 1.0,
+            "recall": 0.017857142857142856,
+            "f1": 0.03508771929824561,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 55,
+            "true_positive": 1
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5205952380952381
         },
         "Meghalaya": {
           "rows": 93,
-          "balanced_accuracy": 0.7133333333333334,
-          "average_precision": 0.48375374635694557
+          "class_counts": {
+            "0": 75,
+            "1": 18
+          },
+          "roc_auc": 0.7562962962962962,
+          "average_precision": 0.48375374635694557,
+          "brier_score": 0.20000634964179978,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7419354838709677,
+            "balanced_accuracy": 0.7133333333333334,
+            "precision": 0.4,
+            "recall": 0.6666666666666666,
+            "f1": 0.5,
+            "false_positive_rate": 0.24,
+            "true_negative": 57,
+            "false_positive": 18,
+            "false_negative": 6,
+            "true_positive": 12
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8064516129032258,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 18,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.7133333333333334
         },
         "Mizoram": {
           "rows": 102,
-          "balanced_accuracy": 0.5725925925925925,
-          "average_precision": 0.5118806196261271
+          "class_counts": {
+            "0": 75,
+            "1": 27
+          },
+          "roc_auc": 0.7846913580246914,
+          "average_precision": 0.5118806196261271,
+          "brier_score": 0.19469984969859808,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7549019607843137,
+            "balanced_accuracy": 0.5725925925925925,
+            "precision": 0.625,
+            "recall": 0.18518518518518517,
+            "f1": 0.2857142857142857,
+            "false_positive_rate": 0.04,
+            "true_negative": 72,
+            "false_positive": 3,
+            "false_negative": 22,
+            "true_positive": 5
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7352941176470589,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 27,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5725925925925925
         },
         "Nagaland": {
           "rows": 89,
-          "balanced_accuracy": 0.5247619047619048,
-          "average_precision": 0.2661336244794158
+          "class_counts": {
+            "0": 75,
+            "1": 14
+          },
+          "roc_auc": 0.6857142857142857,
+          "average_precision": 0.2661336244794158,
+          "brier_score": 0.17291664765818385,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7865168539325843,
+            "balanced_accuracy": 0.5247619047619048,
+            "precision": 0.2222222222222222,
+            "recall": 0.14285714285714285,
+            "f1": 0.17391304347826086,
+            "false_positive_rate": 0.09333333333333334,
+            "true_negative": 68,
+            "false_positive": 7,
+            "false_negative": 12,
+            "true_positive": 2
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8426966292134831,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 14,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5247619047619048
         },
         "Sikkim": {
           "rows": 106,
-          "balanced_accuracy": 0.5189247311827957,
-          "average_precision": 0.6463467169615728
+          "class_counts": {
+            "0": 75,
+            "1": 31
+          },
+          "roc_auc": 0.8658064516129033,
+          "average_precision": 0.6463467169615728,
+          "brier_score": 0.1647123646752226,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7075471698113207,
+            "balanced_accuracy": 0.5189247311827957,
+            "precision": 0.5,
+            "recall": 0.06451612903225806,
+            "f1": 0.11428571428571428,
+            "false_positive_rate": 0.02666666666666667,
+            "true_negative": 73,
+            "false_positive": 2,
+            "false_negative": 29,
+            "true_positive": 2
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7075471698113207,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 31,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5189247311827957
         },
         "Tamil Nadu": {
           "rows": 37,
-          "balanced_accuracy": 0.2702702702702703,
-          "average_precision": 0.9999999999999998
+          "class_counts": {
+            "1": 37
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.3695536367726991,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.2702702702702703,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.2702702702702703,
+            "f1": 0.425531914893617,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 27,
+            "true_positive": 10
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 37,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Telangana": {
           "rows": 1,
-          "balanced_accuracy": 1.0,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 1
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.09218823004009011,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 0,
+            "true_positive": 1
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.0,
+            "balanced_accuracy": null,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 1,
+            "true_positive": 0
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Tripura": {
           "rows": 78,
-          "balanced_accuracy": 0.62,
-          "average_precision": 0.07279014844804318
+          "class_counts": {
+            "0": 75,
+            "1": 3
+          },
+          "roc_auc": 0.6577777777777777,
+          "average_precision": 0.07279014844804318,
+          "brier_score": 0.22351897973500898,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5769230769230769,
+            "balanced_accuracy": 0.62,
+            "precision": 0.058823529411764705,
+            "recall": 0.6666666666666666,
+            "f1": 0.10810810810810811,
+            "false_positive_rate": 0.4266666666666667,
+            "true_negative": 43,
+            "false_positive": 32,
+            "false_negative": 1,
+            "true_positive": 2
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.9615384615384616,
+            "balanced_accuracy": 0.5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 3,
+            "true_positive": 0
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.62
         }
       }
     },
@@ -317,14 +1736,28 @@
       "precision": 0.5570291777188329,
       "recall": 0.5384615384615384,
       "f1": 0.5475880052151239,
-      "roc_auc": 0.6818339852238156,
-      "average_precision": 0.5373670806276449,
-      "brier_score": 0.22430856316673112,
       "false_positive_rate": 0.2573189522342065,
       "true_negative": 482,
       "false_positive": 167,
       "false_negative": 180,
       "true_positive": 210,
+      "roc_auc": 0.6818339852238156,
+      "average_precision": 0.5373670806276449,
+      "brier_score": 0.22430856316673112,
+      "alert_threshold": 0.7,
+      "alert_metrics": {
+        "threshold": 0.7,
+        "accuracy": 0.6737247353224254,
+        "balanced_accuracy": 0.5930129192841057,
+        "precision": 0.660377358490566,
+        "recall": 0.2692307692307692,
+        "f1": 0.3825136612021858,
+        "false_positive_rate": 0.08320493066255778,
+        "true_negative": 595,
+        "false_positive": 54,
+        "false_negative": 285,
+        "true_positive": 105
+      },
       "held_out_states": [
         "Andhra Pradesh",
         "Arunachal Pradesh",
@@ -340,73 +1773,505 @@
         "Telangana",
         "Tripura"
       ],
-      "mean_state_balanced_accuracy": 0.6530178016094617,
-      "mean_state_average_precision": 0.668234650104874,
+      "states_excluded_from_state_means": [
+        "Andhra Pradesh",
+        "Karnataka",
+        "Tamil Nadu",
+        "Telangana"
+      ],
+      "mean_state_balanced_accuracy": 0.6581485505587263,
+      "mean_state_average_precision": 0.5207833834848181,
+      "mean_state_alert_precision": 0.5736844935616419,
       "per_state_metrics": {
         "Andhra Pradesh": {
           "rows": 21,
-          "balanced_accuracy": 0.6190476190476191,
-          "average_precision": 1.0000000000000002
+          "class_counts": {
+            "1": 21
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.2695014917349943,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6190476190476191,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.6190476190476191,
+            "f1": 0.7647058823529411,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 8,
+            "true_positive": 13
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.42857142857142855,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.42857142857142855,
+            "f1": 0.6,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 12,
+            "true_positive": 9
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Arunachal Pradesh": {
           "rows": 95,
-          "balanced_accuracy": 0.6533333333333333,
-          "average_precision": 0.5525547483836688
+          "class_counts": {
+            "0": 75,
+            "1": 20
+          },
+          "roc_auc": 0.7486666666666666,
+          "average_precision": 0.5525547483836688,
+          "brier_score": 0.19741559284229984,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6842105263157895,
+            "balanced_accuracy": 0.6533333333333333,
+            "precision": 0.35294117647058826,
+            "recall": 0.6,
+            "f1": 0.4444444444444444,
+            "false_positive_rate": 0.29333333333333333,
+            "true_negative": 53,
+            "false_positive": 22,
+            "false_negative": 8,
+            "true_positive": 12
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8,
+            "balanced_accuracy": 0.69,
+            "precision": 0.5263157894736842,
+            "recall": 0.5,
+            "f1": 0.5128205128205128,
+            "false_positive_rate": 0.12,
+            "true_negative": 66,
+            "false_positive": 9,
+            "false_negative": 10,
+            "true_positive": 10
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6533333333333333
         },
         "Assam": {
           "rows": 157,
-          "balanced_accuracy": 0.6021951219512196,
-          "average_precision": 0.605827036124823
+          "class_counts": {
+            "1": 82,
+            "0": 75
+          },
+          "roc_auc": 0.6385365853658536,
+          "average_precision": 0.605827036124823,
+          "brier_score": 0.2700444793801163,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5987261146496815,
+            "balanced_accuracy": 0.6021951219512196,
+            "precision": 0.6417910447761194,
+            "recall": 0.524390243902439,
+            "f1": 0.5771812080536913,
+            "false_positive_rate": 0.32,
+            "true_negative": 51,
+            "false_positive": 24,
+            "false_negative": 39,
+            "true_positive": 43
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.5095541401273885,
+            "balanced_accuracy": 0.5230894308943089,
+            "precision": 0.5806451612903226,
+            "recall": 0.21951219512195122,
+            "f1": 0.3185840707964602,
+            "false_positive_rate": 0.17333333333333334,
+            "true_negative": 62,
+            "false_positive": 13,
+            "false_negative": 64,
+            "true_positive": 18
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6021951219512196
         },
         "Karnataka": {
           "rows": 30,
-          "balanced_accuracy": 0.43333333333333335,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 30
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.38492099792125395,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.43333333333333335,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.43333333333333335,
+            "f1": 0.6046511627906976,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 17,
+            "true_positive": 13
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.2,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.2,
+            "f1": 0.3333333333333333,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 24,
+            "true_positive": 6
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Kerala": {
           "rows": 99,
-          "balanced_accuracy": 0.6471428571428571,
-          "average_precision": 0.616367248856624
+          "class_counts": {
+            "1": 50,
+            "0": 49
+          },
+          "roc_auc": 0.6440816326530612,
+          "average_precision": 0.616367248856624,
+          "brier_score": 0.2550474959750061,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6464646464646465,
+            "balanced_accuracy": 0.6471428571428571,
+            "precision": 0.6744186046511628,
+            "recall": 0.58,
+            "f1": 0.6236559139784946,
+            "false_positive_rate": 0.2857142857142857,
+            "true_negative": 35,
+            "false_positive": 14,
+            "false_negative": 21,
+            "true_positive": 29
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.5353535353535354,
+            "balanced_accuracy": 0.5385714285714286,
+            "precision": 0.6111111111111112,
+            "recall": 0.22,
+            "f1": 0.3235294117647059,
+            "false_positive_rate": 0.14285714285714285,
+            "true_negative": 42,
+            "false_positive": 7,
+            "false_negative": 39,
+            "true_positive": 11
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6471428571428571
         },
         "Manipur": {
           "rows": 131,
-          "balanced_accuracy": 0.6214285714285714,
-          "average_precision": 0.5472032660119344
+          "class_counts": {
+            "0": 75,
+            "1": 56
+          },
+          "roc_auc": 0.6526190476190477,
+          "average_precision": 0.5472032660119344,
+          "brier_score": 0.2415941351734837,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.6183206106870229,
+            "balanced_accuracy": 0.6214285714285714,
+            "precision": 0.5454545454545454,
+            "recall": 0.6428571428571429,
+            "f1": 0.5901639344262295,
+            "false_positive_rate": 0.4,
+            "true_negative": 45,
+            "false_positive": 30,
+            "false_negative": 20,
+            "true_positive": 36
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.6412213740458015,
+            "balanced_accuracy": 0.6029761904761906,
+            "precision": 0.6551724137931034,
+            "recall": 0.3392857142857143,
+            "f1": 0.4470588235294118,
+            "false_positive_rate": 0.13333333333333333,
+            "true_negative": 65,
+            "false_positive": 10,
+            "false_negative": 37,
+            "true_positive": 19
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6214285714285714
         },
         "Meghalaya": {
           "rows": 93,
-          "balanced_accuracy": 0.7544444444444445,
-          "average_precision": 0.49228677939088233
+          "class_counts": {
+            "0": 75,
+            "1": 18
+          },
+          "roc_auc": 0.782962962962963,
+          "average_precision": 0.49228677939088233,
+          "brier_score": 0.17932898974379968,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7741935483870968,
+            "balanced_accuracy": 0.7544444444444445,
+            "precision": 0.4482758620689655,
+            "recall": 0.7222222222222222,
+            "f1": 0.5531914893617021,
+            "false_positive_rate": 0.21333333333333335,
+            "true_negative": 59,
+            "false_positive": 16,
+            "false_negative": 5,
+            "true_positive": 13
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8602150537634409,
+            "balanced_accuracy": 0.7655555555555555,
+            "precision": 0.6470588235294118,
+            "recall": 0.6111111111111112,
+            "f1": 0.6285714285714286,
+            "false_positive_rate": 0.08,
+            "true_negative": 69,
+            "false_positive": 6,
+            "false_negative": 7,
+            "true_positive": 11
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.7544444444444445
         },
         "Mizoram": {
           "rows": 102,
-          "balanced_accuracy": 0.6133333333333333,
-          "average_precision": 0.5027847265321239
+          "class_counts": {
+            "0": 75,
+            "1": 27
+          },
+          "roc_auc": 0.757037037037037,
+          "average_precision": 0.5027847265321239,
+          "brier_score": 0.1692917299770658,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7450980392156863,
+            "balanced_accuracy": 0.6133333333333333,
+            "precision": 0.5294117647058824,
+            "recall": 0.3333333333333333,
+            "f1": 0.4090909090909091,
+            "false_positive_rate": 0.10666666666666667,
+            "true_negative": 67,
+            "false_positive": 8,
+            "false_negative": 18,
+            "true_positive": 9
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7352941176470589,
+            "balanced_accuracy": 0.5237037037037038,
+            "precision": 0.5,
+            "recall": 0.07407407407407407,
+            "f1": 0.12903225806451613,
+            "false_positive_rate": 0.02666666666666667,
+            "true_negative": 73,
+            "false_positive": 2,
+            "false_negative": 25,
+            "true_positive": 2
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6133333333333333
         },
         "Nagaland": {
           "rows": 89,
-          "balanced_accuracy": 0.5695238095238095,
-          "average_precision": 0.3289398177606804
+          "class_counts": {
+            "0": 75,
+            "1": 14
+          },
+          "roc_auc": 0.6419047619047619,
+          "average_precision": 0.3289398177606804,
+          "brier_score": 0.16344972848714717,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7640449438202247,
+            "balanced_accuracy": 0.5695238095238095,
+            "precision": 0.26666666666666666,
+            "recall": 0.2857142857142857,
+            "f1": 0.27586206896551724,
+            "false_positive_rate": 0.14666666666666667,
+            "true_negative": 64,
+            "false_positive": 11,
+            "false_negative": 10,
+            "true_positive": 4
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8426966292134831,
+            "balanced_accuracy": 0.5290476190476191,
+            "precision": 0.5,
+            "recall": 0.07142857142857142,
+            "f1": 0.125,
+            "false_positive_rate": 0.013333333333333334,
+            "true_negative": 74,
+            "false_positive": 1,
+            "false_negative": 13,
+            "true_positive": 1
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.5695238095238095
         },
         "Sikkim": {
           "rows": 106,
-          "balanced_accuracy": 0.6819354838709677,
-          "average_precision": 0.6178545050703027
+          "class_counts": {
+            "0": 75,
+            "1": 31
+          },
+          "roc_auc": 0.7548387096774194,
+          "average_precision": 0.6178545050703027,
+          "brier_score": 0.16928651559417804,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.7641509433962265,
+            "balanced_accuracy": 0.6819354838709677,
+            "precision": 0.625,
+            "recall": 0.4838709677419355,
+            "f1": 0.5454545454545454,
+            "false_positive_rate": 0.12,
+            "true_negative": 66,
+            "false_positive": 9,
+            "false_negative": 16,
+            "true_positive": 15
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.7452830188679245,
+            "balanced_accuracy": 0.564516129032258,
+            "precision": 1.0,
+            "recall": 0.12903225806451613,
+            "f1": 0.22857142857142856,
+            "false_positive_rate": 0.0,
+            "true_negative": 75,
+            "false_positive": 0,
+            "false_negative": 27,
+            "true_positive": 4
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.6819354838709677
         },
         "Tamil Nadu": {
           "rows": 37,
-          "balanced_accuracy": 0.5135135135135135,
-          "average_precision": 0.9999999999999998
+          "class_counts": {
+            "1": 37
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.34460922126443155,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5135135135135135,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.5135135135135135,
+            "f1": 0.6785714285714286,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 18,
+            "true_positive": 19
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.32432432432432434,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 0.32432432432432434,
+            "f1": 0.4897959183673469,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 25,
+            "true_positive": 12
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Telangana": {
           "rows": 1,
-          "balanced_accuracy": 1.0,
-          "average_precision": 1.0
+          "class_counts": {
+            "1": 1
+          },
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.005480969212524401,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 0,
+            "true_positive": 1
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 1.0,
+            "balanced_accuracy": null,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "false_positive_rate": null,
+            "true_negative": 0,
+            "false_positive": 0,
+            "false_negative": 0,
+            "true_positive": 1
+          },
+          "has_both_classes": false,
+          "balanced_accuracy": null
         },
         "Tripura": {
           "rows": 78,
-          "balanced_accuracy": 0.78,
-          "average_precision": 0.4232323232323232
+          "class_counts": {
+            "0": 75,
+            "1": 3
+          },
+          "roc_auc": 0.8577777777777778,
+          "average_precision": 0.4232323232323232,
+          "brier_score": 0.2385470041800367,
+          "metrics_at_0_5": {
+            "threshold": 0.5,
+            "accuracy": 0.5769230769230769,
+            "balanced_accuracy": 0.78,
+            "precision": 0.08333333333333333,
+            "recall": 1.0,
+            "f1": 0.15384615384615385,
+            "false_positive_rate": 0.44,
+            "true_negative": 42,
+            "false_positive": 33,
+            "false_negative": 0,
+            "true_positive": 3
+          },
+          "metrics_at_alert_threshold": {
+            "threshold": 0.7,
+            "accuracy": 0.8974358974358975,
+            "balanced_accuracy": 0.6266666666666667,
+            "precision": 0.14285714285714285,
+            "recall": 0.3333333333333333,
+            "f1": 0.2,
+            "false_positive_rate": 0.08,
+            "true_negative": 69,
+            "false_positive": 6,
+            "false_negative": 2,
+            "true_positive": 1
+          },
+          "has_both_classes": true,
+          "balanced_accuracy": 0.78
         }
       }
     }

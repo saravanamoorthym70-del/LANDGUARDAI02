@@ -1,5 +1,7 @@
 import csv
+import math
 import os
+from datetime import date, datetime, timedelta
 
 from typing import Any
 
@@ -96,6 +98,83 @@ class LiveRecordRequest(BaseModel):
     elevation_m: float | None = Field(default=None, ge=-500, le=9000)
     slope_deg: float | None = Field(default=None, ge=0, le=90)
     raw_result: dict[str, Any] = Field(default_factory=dict)
+
+
+def _get_nasa_power_daily_environment(latitude: float, longitude: float):
+    end_date = date.today()
+    start_date = end_date - timedelta(days=21)
+
+    try:
+        response = requests.get(
+            "https://power.larc.nasa.gov/api/temporal/daily/point",
+            params={
+                "parameters": "PRECTOTCORR,GWETTOP",
+                "community": "AG",
+                "longitude": longitude,
+                "latitude": latitude,
+                "start": start_date.strftime("%Y%m%d"),
+                "end": end_date.strftime("%Y%m%d"),
+                "format": "JSON",
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        parameters = response.json()["properties"]["parameter"]
+        rainfall_by_day = parameters["PRECTOTCORR"]
+        soil_moisture_by_day = parameters["GWETTOP"]
+    except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Live weather is rate-limited and NASA POWER backup data is unavailable.",
+        ) from exc
+
+    readings = []
+    for date_key, rainfall_value in rainfall_by_day.items():
+        try:
+            rainfall = float(rainfall_value)
+            soil_moisture = float(soil_moisture_by_day[date_key])
+            observation_date = datetime.strptime(date_key, "%Y%m%d").date()
+        except (KeyError, TypeError, ValueError):
+            continue
+
+        if (
+            not math.isfinite(rainfall)
+            or not math.isfinite(soil_moisture)
+            or rainfall < 0
+            or not 0 <= soil_moisture <= 1
+        ):
+            continue
+
+        readings.append((observation_date, rainfall, soil_moisture))
+
+    readings.sort(key=lambda reading: reading[0])
+    recent_readings = readings[-7:]
+    if (
+        len(recent_readings) < 7
+        or (recent_readings[-1][0] - recent_readings[0][0]).days != 6
+    ):
+        raise HTTPException(
+            status_code=503,
+            detail="Live weather is rate-limited and NASA POWER has insufficient recent data.",
+        )
+
+    daily_rainfall = [
+        {"date": day.isoformat(), "rainfall_mm": round(rainfall, 2)}
+        for day, rainfall, _ in recent_readings
+    ]
+    return {
+        "latitude": latitude,
+        "longitude": longitude,
+        "rainfall_1d_mm": round(recent_readings[-1][1], 2),
+        "rainfall_3d_mm": round(sum(reading[1] for reading in recent_readings[-3:]), 2),
+        "rainfall_7d_mm": round(sum(reading[1] for reading in recent_readings), 2),
+        "soil_moisture_0_7cm": round(recent_readings[-1][2], 3),
+        "elevation_m": None,
+        "rainfall_daily": daily_rainfall,
+        "data_source": "NASA POWER",
+        "observed_through": recent_readings[-1][0].isoformat(),
+        "is_live_data": False,
+    }
 
 
 # ============================================================
@@ -235,6 +314,9 @@ def live_environment(latitude: float, longitude: float):
             detail=f"Failed to retrieve live environmental data: {exc}"
         )
 
+    if response.status_code == 429:
+        return _get_nasa_power_daily_environment(latitude, longitude)
+
     if response.status_code != 200:
         raise HTTPException(
             status_code=502,
@@ -370,6 +452,9 @@ def live_environment(latitude: float, longitude: float):
         "elevation_m": elevation,
 
         "rainfall_daily": rainfall_daily,
+        "data_source": "Open-Meteo",
+        "observed_through": times[-1] if times else None,
+        "is_live_data": True,
     }
 
 # ============================================================

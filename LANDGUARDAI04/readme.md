@@ -4,7 +4,7 @@ AI-based early warning and landslide risk monitoring for the North Eastern Regio
 
 ## What is improved in this version
 
-- Four-model comparison with leave-one-state-out validation; the selected estimator is saved with per-state metrics.
+- Four-model comparison using leave-one-state-out validation, a 5-fold spatial-group check, and a chronological holdout; the selected estimator is saved with threshold-specific and per-state metrics.
 - Prototype screening score with alerts aligned to the HIGH band; scores are not calibrated event probabilities.
 - Stable LOW/MEDIUM/HIGH UI risk bands.
 - Data-quality audit script for missing values, duplicates, ranges and rainfall consistency.
@@ -19,13 +19,13 @@ AI-based early warning and landslide risk monitoring for the North Eastern Regio
 
 ## Current shipped data
 
-`ml/dataset/LANDGUARD_FINAL_DATASET.csv` contains 1,365 rows with location and sample provenance:
+`ml/dataset/LANDGUARD_FINAL_DATASET.csv` contains 1,039 rows with location and sample provenance:
 
 - 390 historical landslide observations (`risk=1`)
-- 975 background/pseudo-absence observations (`risk=0`)
+- 649 background/pseudo-absence observations (`risk=0`)
 - 5 model features: rainfall windows, soil moisture, and elevation
 
-The dataset is a prototype. Background samples are not confirmed landslide absences. Held-out-state validation is informative but does not establish operational accuracy or a real-world landslide probability.
+The dataset is a prototype. Background samples are not confirmed landslide absences, and slope is missing from all current rows so it is excluded from model features. Validation is informative but does not establish operational accuracy or a real-world landslide probability.
 
 ## Quick start
 

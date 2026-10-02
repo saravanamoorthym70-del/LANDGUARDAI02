@@ -11,6 +11,6 @@
 | rainfall_7d_mm | mm | Rainfall over previous 168 h | model feature |
 | soil_moisture_0_7cm | fraction | Surface soil moisture | model feature |
 | elevation_m | m | Elevation | model feature |
-| slope_deg | degrees | Terrain slope estimate | model feature |
+| slope_deg | degrees | Terrain slope estimate | context only; excluded while missing |
 | risk | 0/1 | Positive historical event vs background sample | target |
 | sample_type | text | historical/background provenance | QA only |

@@ -524,9 +524,9 @@ export default function App() {
       await saveLiveRecord(riskData, resolvedLocationName, trigger);
 
       setMapStatus("success");
-      setMapMessage(
-        "Live AI risk assessment completed."
-      );
+      setMapMessage(environment.is_live_data === false
+        ? `Assessment uses delayed NASA POWER data through ${environment.observed_through}; weather is not live.`
+        : "Live AI risk assessment completed.");
     } catch (err) {
       console.error("LIVE RISK ERROR:", err);
 

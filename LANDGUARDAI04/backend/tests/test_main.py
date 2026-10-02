@@ -192,6 +192,7 @@ class FakeResponse:
     def __init__(self, json_data, status_code=200):
         self._json_data = json_data
         self.status_code = status_code
+        self.text = str(json_data)
 
     def json(self):
         return self._json_data
@@ -226,6 +227,60 @@ def test_live_environment_success(monkeypatch):
     assert body["rainfall_3d_mm"] == pytest.approx(72.0)
     assert body["rainfall_7d_mm"] == pytest.approx(168.0)
     assert body["elevation_m"] == 900.0
+
+
+def test_live_environment_uses_nasa_power_when_open_meteo_is_rate_limited(monkeypatch):
+    daily_rainfall = {
+        "20260923": 1,
+        "20260924": 2,
+        "20260925": 3,
+        "20260926": 4,
+        "20260927": 5,
+        "20260928": 6,
+        "20260929": 7,
+    }
+    daily_soil_moisture = {day: 0.6 for day in daily_rainfall}
+
+    def fake_get(url, *args, **kwargs):
+        if "forecast" in url:
+            return FakeResponse({}, status_code=429)
+        if "power.larc.nasa.gov" in url:
+            return FakeResponse(
+                {
+                    "properties": {
+                        "parameter": {
+                            "PRECTOTCORR": daily_rainfall,
+                            "GWETTOP": daily_soil_moisture,
+                        }
+                    }
+                }
+            )
+        if "elevation" in url:
+            return FakeResponse({"elevation": [540.0] * 9})
+        raise AssertionError(f"unexpected URL {url}")
+
+    monkeypatch.setattr(requests, "get", fake_get)
+
+    response = client.get(
+        "/live-environment", params={"latitude": 25.57, "longitude": 91.88}
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["data_source"] == "NASA POWER"
+    assert body["observed_through"] == "2026-09-29"
+    assert body["is_live_data"] is False
+    assert body["rainfall_1d_mm"] == 7
+    assert body["rainfall_3d_mm"] == 18
+    assert body["rainfall_7d_mm"] == 28
+    assert body["soil_moisture_0_7cm"] == 0.6
+
+    risk_response = client.get(
+        "/live-risk", params={"latitude": 25.57, "longitude": 91.88}
+    )
+    assert risk_response.status_code == 200
+    assert risk_response.json()["environment"]["data_source"] == "NASA POWER"
+    assert risk_response.json()["prediction"]["risk_level"] in {"LOW", "MEDIUM", "HIGH"}
 
 
 def test_live_environment_upstream_failure(monkeypatch):
