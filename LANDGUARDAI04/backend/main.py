@@ -20,6 +20,8 @@ from backend.record_store import (
     list_records,
 )
 from backend.risk_grid import get_risk_grid_geojson, parse_bbox
+from backend.exposure import get_exposure_geojson
+from backend.replay import replay_location
 
 
 # ============================================================
@@ -760,3 +762,35 @@ def get_risk_grid(
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return get_risk_grid_geojson(parsed_bbox, limit)
+
+
+@app.get("/exposure")
+def get_exposure(
+    bbox: str,
+    limit: int = Query(default=2000, ge=1, le=10000),
+):
+    try:
+        parsed_bbox = parse_bbox(bbox)
+        return get_exposure_geojson(parsed_bbox, limit)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get("/replay")
+def get_replay(
+    latitude: float = Query(ge=-90, le=90),
+    longitude: float = Query(ge=-180, le=180),
+    event_date: date = Query(alias="date"),
+    days: int = Query(default=7, ge=1, le=30),
+):
+    if event_date >= date.today():
+        raise HTTPException(status_code=422, detail="date must be before today")
+    try:
+        return replay_location(latitude, longitude, event_date, days=days)
+    except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Historical replay data unavailable: {type(exc).__name__}",
+        ) from exc

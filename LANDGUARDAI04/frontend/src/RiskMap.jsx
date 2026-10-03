@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import L from "leaflet";
 
 import {
   MapContainer,
@@ -16,6 +17,7 @@ import {
   MousePointerClick,
   RefreshCw,
   Layers,
+  History,
 } from "lucide-react";
 
 import "leaflet/dist/leaflet.css";
@@ -91,6 +93,24 @@ function getRiskColor(risk) {
   // Blue = analysis in progress
   return "#3E7CB1";
 }
+
+const EXPOSURE_STYLES = {
+  roads: { color: "#5b6870", weight: 2, fillColor: "#5b6870", fillOpacity: 0.16 },
+  bridges: { color: "#d07132", weight: 3, fillColor: "#d07132", fillOpacity: 0.5 },
+  settlements: { color: "#087f73", weight: 1, fillColor: "#087f73", fillOpacity: 0.35 },
+  schools: { color: "#3176a9", weight: 1, fillColor: "#3176a9", fillOpacity: 0.55 },
+  hospitals: { color: "#c5363d", weight: 1, fillColor: "#c5363d", fillOpacity: 0.55 },
+  railways: { color: "#77713a", weight: 3, fillColor: "#77713a", fillOpacity: 0.25 },
+};
+
+const EXPOSURE_LABELS = {
+  roads: "Roads",
+  bridges: "Bridges",
+  settlements: "Settlements",
+  schools: "Schools",
+  hospitals: "Hospitals",
+  railways: "Railways",
+};
 
 // ============================================================
 // HISTORICAL LANDSLIDE MARKER
@@ -469,6 +489,29 @@ export default function RiskMap({
   const [riskGrid, setRiskGrid] = useState(null);
   const [gridLoading, setGridLoading] = useState(false);
   const [gridError, setGridError] = useState(false);
+  const [exposureEnabled, setExposureEnabled] = useState(false);
+  const [exposureBounds, setExposureBounds] = useState("");
+  const [exposureData, setExposureData] = useState(null);
+  const [exposureLoading, setExposureLoading] = useState(false);
+  const [exposureError, setExposureError] = useState(false);
+  const [visibleExposureLayers, setVisibleExposureLayers] = useState({
+    roads: true,
+    bridges: true,
+    settlements: true,
+    schools: true,
+    hospitals: true,
+    railways: true,
+  });
+  const [replayDate, setReplayDate] = useState(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday.toISOString().slice(0, 10);
+  });
+  const [maxReplayDate] = useState(replayDate);
+  const [replayDays, setReplayDays] = useState(7);
+  const [replayResult, setReplayResult] = useState(null);
+  const [replayLoading, setReplayLoading] = useState(false);
+  const [replayError, setReplayError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -532,6 +575,62 @@ export default function RiskMap({
     };
   }, [apiBaseUrl, gridBounds, gridEnabled]);
 
+  useEffect(() => {
+    if (!exposureEnabled || !exposureBounds) return undefined;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      setExposureLoading(true);
+      setExposureError(false);
+      try {
+        const query = new URLSearchParams({ bbox: exposureBounds, limit: "2000" });
+        const response = await fetch(`${apiBaseUrl}/exposure?${query}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`Exposure request failed (${response.status})`);
+        }
+        setExposureData(await response.json());
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.warn("Exposure layers could not be loaded:", error);
+          setExposureError(true);
+        }
+      } finally {
+        if (!controller.signal.aborted) setExposureLoading(false);
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [apiBaseUrl, exposureBounds, exposureEnabled]);
+
+  async function runReplay(event) {
+    event.preventDefault();
+    if (!selectedLocation) return;
+    setReplayLoading(true);
+    setReplayError(false);
+    try {
+      const query = new URLSearchParams({
+        latitude: String(selectedLocation.lat),
+        longitude: String(selectedLocation.lng),
+        date: replayDate,
+        days: String(replayDays),
+      });
+      const response = await fetch(`${apiBaseUrl}/replay?${query}`);
+      if (!response.ok) throw new Error(`Replay request failed (${response.status})`);
+      setReplayResult(await response.json());
+    } catch (error) {
+      console.warn("Historical replay could not be loaded:", error);
+      setReplayError(true);
+      setReplayResult(null);
+    } finally {
+      setReplayLoading(false);
+    }
+  }
+
   // ==========================================================
   // LIVE LOCATION
   // ==========================================================
@@ -572,6 +671,7 @@ export default function RiskMap({
 
         <MapFocusController location={focusLocation} />
         <MapBoundsWatcher onBoundsChange={setGridBounds} />
+        <MapBoundsWatcher onBoundsChange={setExposureBounds} />
 
         {/* ====================================================
             OPENSTREETMAP
@@ -598,6 +698,32 @@ export default function RiskMap({
             }}
           />
         )}
+
+        {exposureEnabled && Object.entries(EXPOSURE_STYLES).map(([category, style]) => {
+          const layer = exposureData?.layers?.[category];
+          if (!visibleExposureLayers[category] || !layer?.features?.length) return null;
+          return (
+            <GeoJSON
+              key={`exposure-${category}`}
+              data={layer}
+              style={style}
+              pointToLayer={(_, latlng) => L.circleMarker(latlng, {
+                radius: category === "hospitals" ? 6 : 4,
+                color: style.color,
+                fillColor: style.fillColor,
+                fillOpacity: style.fillOpacity,
+                weight: 1.5,
+              })}
+              onEachFeature={(feature, layerInstance) => {
+                const properties = feature.properties || {};
+                const label = properties.name || properties.ref || properties.feature_id || category;
+                layerInstance.bindPopup(
+                  `${EXPOSURE_LABELS[category]}: ${String(label)}`,
+                );
+              }}
+            />
+          );
+        })}
 
         {historicalEvents.map(
             (item, index) => (
@@ -730,6 +856,135 @@ export default function RiskMap({
           <p className="risk-grid-disclaimer">Prototype screening score, not an official warning.</p>
         </section>
       )}
+
+      <section className="risk-exposure-panel" aria-label="Exposure overlay">
+        <div className="risk-grid-summary-heading">
+          <h3>Exposure overlay</h3>
+          <button
+            type="button"
+            className={`risk-grid-toggle ${exposureEnabled ? "is-active" : ""}`}
+            aria-pressed={exposureEnabled}
+            onClick={() => setExposureEnabled((enabled) => !enabled)}
+            title="Toggle exposure layers intersecting HIGH cells"
+          >
+            <Layers size={15} />
+            <span>{exposureEnabled ? "Hide exposure" : "Show exposure"}</span>
+          </button>
+        </div>
+        {exposureEnabled && (
+          <>
+            <div className="exposure-layer-toggles">
+              {Object.entries(EXPOSURE_LABELS).map(([category, label]) => (
+                <label key={category} className="exposure-layer-toggle">
+                  <input
+                    type="checkbox"
+                    checked={visibleExposureLayers[category]}
+                    onChange={(event) => setVisibleExposureLayers((current) => ({
+                      ...current,
+                      [category]: event.target.checked,
+                    }))}
+                  />
+                  <span className={`exposure-swatch exposure-swatch--${category}`} />
+                  <span>{label}</span>
+                  <span className="exposure-count">
+                    {exposureData?.summary?.[category] ?? 0}
+                  </span>
+                </label>
+              ))}
+            </div>
+            {exposureLoading ? (
+              <p className="risk-grid-empty">Loading exposure intersections…</p>
+            ) : exposureError ? (
+              <p className="risk-grid-empty">Exposure layers unavailable. Build the OSM GeoPackage and run a grid update.</p>
+            ) : exposureData ? (
+              <p className="risk-exposure-headline">
+                {exposureData.summary.headline}
+              </p>
+            ) : (
+              <p className="risk-grid-empty">No exposure intersections available for this map extent.</p>
+            )}
+            <p className="risk-grid-disclaimer">Counts include mapped OSM features only; map completeness varies.</p>
+          </>
+        )}
+      </section>
+
+      <section className="risk-replay-panel" aria-label="Historical replay">
+        <div className="risk-grid-summary-heading">
+          <h3>Historical replay</h3>
+          {selectedLocation && (
+            <span>{selectedLocation.lat.toFixed(3)}, {selectedLocation.lng.toFixed(3)}</span>
+          )}
+        </div>
+        <form className="replay-controls" onSubmit={runReplay}>
+          <label>
+            Event date
+            <input
+              type="date"
+              value={replayDate}
+              max={maxReplayDate}
+              onChange={(event) => setReplayDate(event.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Days
+            <input
+              type="number"
+              min="1"
+              max="30"
+              value={replayDays}
+              onChange={(event) => setReplayDays(Number(event.target.value))}
+              required
+            />
+          </label>
+          <button
+            type="submit"
+            className="risk-grid-toggle"
+            disabled={!selectedLocation || replayLoading}
+          >
+            {replayLoading ? <Loader2 size={14} className="spin" /> : <History size={14} />}
+            <span>{replayLoading ? "Loading" : "Run replay"}</span>
+          </button>
+        </form>
+        {!selectedLocation && (
+          <p className="risk-grid-empty">Select a map location to replay its historical screening scores.</p>
+        )}
+        {replayError && (
+          <p className="risk-grid-empty">Historical weather is unavailable for this date or location.</p>
+        )}
+        {replayResult && (
+          <>
+            <div className="replay-timeline" role="list" aria-label="Daily screening scores before event date">
+              {replayResult.daily_scores.map((item) => {
+                const score = Number(item.risk_score);
+                const available = Number.isFinite(score);
+                const color = getRiskColor(item.risk_band);
+                return (
+                  <div className="replay-day" role="listitem" key={item.date}>
+                    <div className="replay-score-label">
+                      {available ? `${score.toFixed(1)}%` : "N/A"}
+                    </div>
+                    <div className="replay-bar-track">
+                      <span
+                        className="replay-bar"
+                        style={{
+                          width: `${available ? Math.max(score, 2) : 0}%`,
+                          backgroundColor: color,
+                        }}
+                      />
+                    </div>
+                    <span className="replay-band" style={{ color }}>{item.risk_band}</span>
+                    <time dateTime={item.date}>{item.date.slice(5)}</time>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="risk-grid-disclaimer">
+              Historical screening score, not a calibrated event probability or official warning.
+            </p>
+          </>
+        )}
+      </section>
 
     </>
   );

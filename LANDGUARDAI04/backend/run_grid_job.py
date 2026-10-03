@@ -5,6 +5,7 @@ import os
 
 from backend.record_store import init_db
 from backend.risk_grid import run_grid_update
+from backend.telegram_alerts import dispatch_high_risk_alerts
 
 
 def main() -> None:
@@ -54,6 +55,8 @@ def main() -> None:
         max_cells=args.max_cells,
         persist=not args.no_store,
     )
+    if summary["complete"]:
+        summary["alerts"] = dispatch_high_risk_alerts()
     print(json.dumps(summary, indent=2, allow_nan=False))
 
 

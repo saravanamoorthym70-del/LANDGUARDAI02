@@ -82,6 +82,47 @@ For a live-data smoke check that does not persist a partial regional result:
 python -m backend.run_grid_job --max-cells 3 --no-store
 ```
 
+### Telegram alerts
+
+The grid job and six-hour scheduler check stored subscriptions only after a complete grid update. Create a bot with Telegram's `@BotFather` (`/newbot`), then add a project-root `.env` file (already ignored by Git) with:
+
+```env
+TELEGRAM_BOT_TOKEN=<token from BotFather>
+TELEGRAM_TEST_MODE=true
+```
+
+Start the bot with `python -m backend.telegram_bot`, then send it `/start` in Telegram. In test mode the bot replies with that chat's numeric ID. Add `TELEGRAM_TEST_CHAT_ID=<your chat ID>` to `.env` and restart it. Test mode rejects commands from other chats and routes all alert messages only to this chat. It is enabled by default; set `TELEGRAM_TEST_MODE=false` only when you intentionally want notifications sent to subscriber chats. `LANDGUARD_TELEGRAM_COOLDOWN_HOURS` controls the default six-hour repeat cooldown.
+
+Subscribe with `/subscribe location <lat> <lon> [name]` or `/subscribe district <district> in <state>`. Use `/subscriptions` to list IDs and `/unsubscribe <subscription_id>` to remove one. Alerts are emitted only on a stored LOW/MEDIUM-to-HIGH transition and include global model feature importance for context; this is not a local causal explanation. Messages identify the score as a prototype screening score, not an official warning. Bot API delivery cannot be exercised until a valid token is configured.
+
+### OSM exposure overlay
+
+Build the regional feature layers from the existing Geofabrik extracts:
+
+```bash
+python -m ml.scripts.build_exposure_data --pbf "C:/Users/Dell/Downloads/north-eastern-zone-261001.osm.pbf" --pbf "C:/Users/Dell/Downloads/eastern-zone-261001.osm.pbf"
+```
+
+The processor clips roads, bridges, settlements, schools, hospitals, and railways to the eight target-state polygons and writes `ml/dataset/exposure_layers.gpkg` plus `ml/dataset/exposure_layers.metadata.json`. The source is Geofabrik regional OpenStreetMap data (ODbL 1.0); the `261001` local extracts were downloaded on 2026-10-02. The sidecar records the actual input filenames and local file timestamps. This run yielded 295,179 road lines, 14,564 bridge lines, 161 settlement polygons plus 8,522 place points, 4 school polygons plus 403 school points, 4 hospital polygons plus 656 hospital points, and 5,449 railway lines plus 9,173 railway points. `GET /exposure?bbox=min_lon,min_lat,max_lon,max_lat&limit=2000` intersects the mapped features with stored HIGH cells. OSM coverage is incomplete; missing mapped features do not mean the real-world asset is absent.
+
+### Historical replay
+
+Replay a point for the seven days before an event date:
+
+```text
+GET /replay?latitude=25.57&longitude=91.88&date=2026-10-01&days=7
+```
+
+The response uses Open-Meteo archive rainfall and surface soil moisture plus Open-Meteo elevation, then returns one saved-model screening score per day. To evaluate positive events in the exact chronological holdout used by training:
+
+```bash
+python -m ml.scripts.replay_heldout_events
+```
+
+The report includes attempted events, HIGH detections, lead days, pre-event HIGH-score days, and failures. The dataset has no independently verified negative days at those locations, so pre-event HIGH days are a false-alarm proxy, not a measured operational false-positive rate.
+
+Current run: all 32 held-out positive-event requests succeeded; 0/32 reached HIGH in the seven pre-event days, 0 pre-event HIGH days were counted, and there were no replay request failures. The cutoff was 2015-08-27. This matches the saved model's zero recall at the 0.70 threshold; it does not establish that operational false alarms are zero.
+
 ### Live record log
 
 Click a map location or choose **Check my current location** to run a live assessment. Current-location assessment requires browser location permission and a secure context (HTTPS or localhost). After a successful assessment, the frontend sends the location, risk inputs, complete response, browser session ID, per-assessment correlation ID, and trigger (`map-click`, `current-location`, or `scheduled-refresh`) to the backend SQLite record store. The backend assigns a UUID and authoritative capture timestamp while retaining the client timestamp as metadata. Use `GET /records/{record_id}` to retrieve one assessment directly. The **Live records** panel shows the eight most recent entries and supports CSV export with trace metadata and JSON export for the complete raw records. A browser-local cache is used only when the backend is temporarily unavailable. The selected location can also be manually refreshed or monitored automatically every 15 minutes.
@@ -136,6 +177,8 @@ Do not use `build_placeholder_dataset.py` for reported project metrics. It remai
 - `GET /records?limit=50`
 - `GET /records/{record_id}`
 - `GET /risk-grid?bbox=min_lon,min_lat,max_lon,max_lat&limit=2000` (GeoJSON cells with last-updated, completeness, and top-district summary metadata)
+- `GET /exposure?bbox=min_lon,min_lat,max_lon,max_lat&limit=2000` (OSM features intersecting stored HIGH cells by category)
+- `GET /replay?latitude=...&longitude=...&date=YYYY-MM-DD&days=7` (daily pre-event screening scores)
 - `POST /records`
 - `DELETE /records`
 
@@ -166,6 +209,8 @@ Historical landslides + weather + soil + terrain
 This is a research/prototype system, not a safety-certified warning service. The current event filter retains 79 catalog events at <=1 km reported location uncertainty, but the resulting leave-one-state-out performance is weak and the existing 0.70 alert cutoff detects none of those held-out positives. Background locations are not verified absences, no temporal negatives exist, and the large road/settlement distance gap indicates unresolved reporting/sampling bias. OSM distances are diagnostics, not model inputs. Do not use the score as a probability or operational warning.
 
 The regional grid's 1 km spacing is a sampling resolution, not 1 km weather-data resolution; Open-Meteo weather values may represent coarser model cells. Districts are assigned from the supplied boundary overlays, and cells that cannot be assigned unambiguously are excluded from district rankings and reported separately. The saved estimator warns that it was serialized with scikit-learn 1.5.1 while this workspace runtime is 1.9.1; match and validate these versions before relying on model scores.
+
+Exposure counts include mapped OSM objects only and do not establish complete infrastructure coverage. Replay uses historical weather for pre-event dates; because there are no independently confirmed non-event labels, its pre-event HIGH days must not be interpreted as validated false-alarm rates.
 
 The repository does not contain the inputs needed for the remaining task-1/2 features:
 

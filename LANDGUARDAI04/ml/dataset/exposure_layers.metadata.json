@@ -1,0 +1,27 @@
+{
+  "source": "Geofabrik regional OpenStreetMap PBF extracts; OpenStreetMap contributors",
+  "source_url": "https://download.geofabrik.de/asia/india.html",
+  "license": "Open Data Commons Open Database License 1.0",
+  "processed_at": "2026-10-03T03:52:18.965573+00:00",
+  "pbf_files": [
+    {
+      "name": "north-eastern-zone-261001.osm.pbf",
+      "downloaded_at": "2026-10-02T17:24:11.165378+00:00"
+    },
+    {
+      "name": "eastern-zone-261001.osm.pbf",
+      "downloaded_at": "2026-10-02T17:25:58.911850+00:00"
+    }
+  ],
+  "target_states": [
+    "Arunachal Pradesh",
+    "Assam",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Sikkim",
+    "Tripura"
+  ],
+  "output_crs": "EPSG:4326"
+}

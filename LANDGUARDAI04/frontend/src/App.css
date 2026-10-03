@@ -735,6 +735,151 @@
   font-style: italic;
 }
 
+.risk-exposure-panel {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.exposure-layer-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 10px 0;
+}
+
+.exposure-layer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-300);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.exposure-layer-toggle input {
+  accent-color: var(--accent-strong);
+}
+
+.exposure-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.exposure-swatch--roads { background: #5b6870; }
+.exposure-swatch--bridges { background: #d07132; }
+.exposure-swatch--settlements { background: #087f73; }
+.exposure-swatch--schools { background: #3176a9; }
+.exposure-swatch--hospitals { background: #c5363d; }
+.exposure-swatch--railways { background: #77713a; }
+
+.exposure-count {
+  color: var(--text-500);
+  font-family: var(--font-mono);
+}
+
+.risk-exposure-headline {
+  margin: 10px 0 0;
+  color: var(--text-100);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.risk-replay-panel {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.replay-controls {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.replay-controls label {
+  display: grid;
+  gap: 4px;
+  color: var(--text-500);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.replay-controls input {
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-100);
+  font: inherit;
+  font-size: 12px;
+}
+
+.replay-controls input[type="number"] {
+  width: 76px;
+}
+
+.replay-controls button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.replay-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 8px;
+  align-items: end;
+  min-height: 128px;
+  padding: 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+}
+
+.replay-day {
+  display: grid;
+  grid-template-rows: 18px 70px 16px 16px;
+  align-items: end;
+  gap: 3px;
+  min-width: 0;
+  text-align: center;
+  color: var(--text-500);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.replay-score-label {
+  color: var(--text-100);
+  font-size: 10px;
+}
+
+.replay-bar-track {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  height: 70px;
+  background: linear-gradient(to top, rgba(24, 50, 41, 0.04), transparent);
+  border-bottom: 1px solid var(--line);
+}
+
+.replay-bar {
+  display: block;
+  max-width: 100%;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+}
+
+.replay-band {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 700;
+}
+
 .legend-item {
   display: flex;
   align-items: center;

@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import sqlite3
 import uuid
@@ -101,6 +102,27 @@ def init_db() -> None:
                 value TEXT NOT NULL
             )
             """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS alert_subscriptions (
+                subscription_id TEXT PRIMARY KEY,
+                chat_id TEXT NOT NULL,
+                subscription_type TEXT NOT NULL,
+                label TEXT NOT NULL,
+                latitude REAL,
+                longitude REAL,
+                state TEXT,
+                district TEXT,
+                last_band TEXT,
+                last_alert_at TEXT,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            "CREATE INDEX IF NOT EXISTS idx_alert_subscriptions_chat "
+            "ON alert_subscriptions (chat_id, created_at)"
         )
 
 
@@ -320,3 +342,207 @@ def get_risk_grid_last_updated(grid_size_m: int) -> str | None:
             (grid_size_m,),
         ).fetchone()
     return row["updated_at"] if row else None
+
+
+def create_alert_subscription(subscription: dict[str, Any]) -> dict[str, Any]:
+    subscription_type = subscription["subscription_type"]
+    if subscription_type == "location":
+        duplicate_query = (
+            "SELECT * FROM alert_subscriptions WHERE chat_id = ? "
+            "AND subscription_type = 'location' AND latitude = ? AND longitude = ?"
+        )
+        duplicate_values = (
+            subscription["chat_id"],
+            subscription["latitude"],
+            subscription["longitude"],
+        )
+    elif subscription_type == "district":
+        duplicate_query = (
+            "SELECT * FROM alert_subscriptions WHERE chat_id = ? "
+            "AND subscription_type = 'district' AND lower(state) = lower(?) "
+            "AND lower(district) = lower(?)"
+        )
+        duplicate_values = (
+            subscription["chat_id"],
+            subscription["state"],
+            subscription["district"],
+        )
+    else:
+        raise ValueError("subscription_type must be location or district")
+
+    with _connect() as connection:
+        existing = connection.execute(duplicate_query, duplicate_values).fetchone()
+        if existing:
+            return dict(existing)
+
+        stored = {
+            "subscription_id": str(uuid.uuid4()),
+            **subscription,
+            "last_band": None,
+            "last_alert_at": None,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        connection.execute(
+            """
+            INSERT INTO alert_subscriptions (
+                subscription_id, chat_id, subscription_type, label, latitude,
+                longitude, state, district, last_band, last_alert_at, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            tuple(
+                stored.get(key)
+                for key in (
+                    "subscription_id",
+                    "chat_id",
+                    "subscription_type",
+                    "label",
+                    "latitude",
+                    "longitude",
+                    "state",
+                    "district",
+                    "last_band",
+                    "last_alert_at",
+                    "created_at",
+                )
+            ),
+        )
+    return stored
+
+
+def list_alert_subscriptions(chat_id: str | None = None) -> list[dict[str, Any]]:
+    query = "SELECT * FROM alert_subscriptions"
+    parameters: tuple[Any, ...] = ()
+    if chat_id is not None:
+        query += " WHERE chat_id = ?"
+        parameters = (str(chat_id),)
+    query += " ORDER BY created_at, subscription_id"
+    with _connect() as connection:
+        rows = connection.execute(query, parameters).fetchall()
+    return [dict(row) for row in rows]
+
+
+def delete_alert_subscription(subscription_id: str, chat_id: str) -> bool:
+    with _connect() as connection:
+        cursor = connection.execute(
+            "DELETE FROM alert_subscriptions WHERE subscription_id = ? AND chat_id = ?",
+            (subscription_id, str(chat_id)),
+        )
+    return cursor.rowcount > 0
+
+
+def update_alert_subscription_state(
+    subscription_id: str,
+    risk_band: str,
+    last_alert_at: str | None = None,
+) -> None:
+    with _connect() as connection:
+        if last_alert_at is None:
+            connection.execute(
+                "UPDATE alert_subscriptions SET last_band = ? WHERE subscription_id = ?",
+                (risk_band, subscription_id),
+            )
+        else:
+            connection.execute(
+                "UPDATE alert_subscriptions SET last_band = ?, last_alert_at = ? "
+                "WHERE subscription_id = ?",
+                (risk_band, last_alert_at, subscription_id),
+            )
+
+
+def get_risk_grid_cell_for_location(
+    latitude: float, longitude: float
+) -> dict[str, Any] | None:
+    metadata = get_risk_grid_metadata()
+    if metadata is None:
+        return None
+    grid_size_m = int(metadata["grid_size_m"])
+    latitude_radius = (grid_size_m / 111_000) * 2
+    longitude_radius = latitude_radius / max(abs(math.cos(math.radians(latitude))), 0.1)
+    with _connect() as connection:
+        row = connection.execute(
+            """
+            SELECT * FROM risk_grid_cells
+            WHERE grid_size_m = ?
+                AND latitude BETWEEN ? AND ?
+                AND longitude BETWEEN ? AND ?
+            ORDER BY (latitude - ?) * (latitude - ?)
+                + (longitude - ?) * (longitude - ?) * ?
+            LIMIT 1
+            """,
+            (
+                grid_size_m,
+                latitude - latitude_radius,
+                latitude + latitude_radius,
+                longitude - longitude_radius,
+                longitude + longitude_radius,
+                latitude,
+                latitude,
+                longitude,
+                longitude,
+                math.cos(math.radians(latitude)) ** 2,
+            ),
+        ).fetchone()
+    if row is None:
+        return None
+    cell = dict(row)
+    cell["inputs"] = json.loads(cell.pop("inputs_json"))
+    cell["geometry"] = json.loads(cell.pop("geometry_json"))
+    return cell
+
+
+def get_risk_grid_cell_for_district(state: str, district: str) -> dict[str, Any] | None:
+    metadata = get_risk_grid_metadata()
+    if metadata is None:
+        return None
+    with _connect() as connection:
+        row = connection.execute(
+            """
+            SELECT * FROM risk_grid_cells
+            WHERE grid_size_m = ? AND lower(state) = lower(?)
+                AND lower(district) = lower(?)
+            ORDER BY risk_score DESC, updated_at DESC
+            LIMIT 1
+            """,
+            (int(metadata["grid_size_m"]), state, district),
+        ).fetchone()
+    if row is None:
+        return None
+    cell = dict(row)
+    cell["inputs"] = json.loads(cell.pop("inputs_json"))
+    cell["geometry"] = json.loads(cell.pop("geometry_json"))
+    return cell
+
+
+def list_high_risk_grid_cells(
+    bbox: tuple[float, float, float, float], limit: int = 5000
+) -> list[dict[str, Any]]:
+    metadata = get_risk_grid_metadata()
+    if metadata is None:
+        return []
+    min_lon, min_lat, max_lon, max_lat = bbox
+    with _connect() as connection:
+        rows = connection.execute(
+            """
+            SELECT * FROM risk_grid_cells
+            WHERE grid_size_m = ? AND risk_band = 'HIGH'
+                AND longitude BETWEEN ? AND ?
+                AND latitude BETWEEN ? AND ?
+            ORDER BY risk_score DESC, updated_at DESC
+            LIMIT ?
+            """,
+            (
+                int(metadata["grid_size_m"]),
+                min_lon,
+                max_lon,
+                min_lat,
+                max_lat,
+                limit,
+            ),
+        ).fetchall()
+    cells = []
+    for row in rows:
+        cell = dict(row)
+        cell["inputs"] = json.loads(cell.pop("inputs_json"))
+        cell["geometry"] = json.loads(cell.pop("geometry_json"))
+        cells.append(cell)
+    return cells

@@ -4,6 +4,7 @@ import time
 
 from backend.record_store import init_db
 from backend.risk_grid import run_grid_update
+from backend.telegram_alerts import dispatch_high_risk_alerts
 
 
 def main() -> None:
@@ -20,7 +21,7 @@ def main() -> None:
     while True:
         try:
             init_db()
-            run_grid_update(
+            summary = run_grid_update(
                 cell_size_m=int(os.getenv("LANDGUARD_GRID_CELL_SIZE_M", "1000")),
                 batch_size=int(os.getenv("LANDGUARD_GRID_BATCH_SIZE", "200")),
                 cache_hours=float(os.getenv("LANDGUARD_GRID_CACHE_HOURS", "4")),
@@ -28,6 +29,8 @@ def main() -> None:
                     os.getenv("LANDGUARD_GRID_REQUEST_INTERVAL_SECONDS", "2")
                 ),
             )
+            if summary["complete"]:
+                dispatch_high_risk_alerts()
         except Exception:
             logger.exception("Scheduled risk-grid update failed; retaining stored results")
         time.sleep(interval_hours * 60 * 60)

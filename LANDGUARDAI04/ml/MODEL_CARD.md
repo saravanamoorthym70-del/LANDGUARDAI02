@@ -48,3 +48,13 @@ The regional job uses the same saved Extra Trees estimator and five model featur
 District boundaries come from the GeoBoundaries India ADM2 2021 GeoJSON (`ml/dataset/district_boundaries.geojson`), retrieved on 2026-10-02 (ODbL 1.0; source data updated 2023-01-19). When a cell representative point falls outside the district polygons because of boundary-source mismatch, the job assigns a district only if one district covers at least half of the clipped cell. Unassigned cells are excluded from district rankings and exposed in API metadata.
 
 The current pickle emits an `InconsistentVersionWarning`: it was saved with scikit-learn 1.5.1 and the workspace runtime is 1.9.1. This compatibility warning is unresolved; validate the estimator under its training version or retrain and revalidate under the target runtime before relying on scores.
+
+## Exposure overlay
+
+The optional exposure view intersects stored HIGH grid cells with roads, mapped bridges, settlements, schools, hospitals, and railways from the local Geofabrik OSM extracts. Processed layers are clipped to the target-state polygons and stored in `ml/dataset/exposure_layers.gpkg`; the accompanying metadata JSON records input filenames, local file timestamps, processing time, license, and CRS. OSM feature completeness varies, so these are mapped-feature counts, not verified infrastructure inventories or population estimates.
+
+## Historical replay
+
+The `/replay` endpoint requests historical rainfall and 0–7 cm soil moisture from Open-Meteo's archive and uses Open-Meteo elevation for the model's fifth input. It scores each day before the selected event date with the saved estimator and the deployed LOW/MEDIUM/HIGH thresholds. `ml/scripts/replay_heldout_events.py` recomputes the training script's chronological 80/20 cutoff over the dated table, replays only positive rows in the test split, and reports request failures, events reaching HIGH, lead days, and pre-event HIGH-score days. Those pre-event days are not verified negatives; the report labels the false-alarm count as a proxy, not a measured operational false-positive rate.
+
+The current chronological replay used cutoff 2015-08-27 and fetched all 32 held-out positives successfully. None reached HIGH during the preceding seven days; 0 pre-event HIGH-score days and 0 request failures were reported. The event dataset does not contain independently verified negative days, so this is not an operational false-alarm estimate.
