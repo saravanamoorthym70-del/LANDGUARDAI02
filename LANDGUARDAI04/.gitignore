@@ -5,6 +5,7 @@ frontend/node_modules/
 frontend/dist/
 ml/dataset/*.csv
 !ml/dataset/INDIA_TARGET_REGIONS_landslides.csv
+!ml/dataset/INDIA_TARGET_REGIONS_MAP.csv
 !ml/dataset/.gitkeep
 .env
 *.env

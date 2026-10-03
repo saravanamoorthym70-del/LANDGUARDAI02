@@ -1,80 +1,80 @@
-event_id,event_date,event_title,location,latitude,longitude,location_accuracy,landslide_category,landslide_trigger,landslide_size,fatalities,injuries,state,country,location_accuracy_km,region
-7031,05/24/2015 12:00:00 AM,"Bop, Sikkim","Bop, Sikkim",27.6163,88.6586,1km,landslide,unknown,medium,0.0,0.0,Sikkim,India,1.0,NER
-9405,04/19/2016 12:00:00 AM,"Techahan Ward, Mon, Nagaland, India","Techahan Ward, Mon, Nagaland, India",26.7223,95.0243,1km,landslide,continuous_rain,medium,0.0,0.0,Nagaland,India,1.0,NER
-8012,09/06/2015 03:00:00 PM,"Umling, Meghalaya 793102, India","Umling, Meghalaya 793102, India",25.9703,91.8584,1km,landslide,unknown,medium,0.0,0.0,Meghalaya,India,1.0,NER
-2369,08/31/2010 12:00:00 AM,"Chittinagar, Vijayawada city, Andhra Pradesh","Chittinagar, Vijayawada city, Andhra Pradesh",16.5332,80.6103,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,1.0,SOUTH
-7335,08/18/2015 09:00:00 AM,Tura Civil Hospital,Tura Civil Hospital,25.5145,90.2023,1km,landslide,continuous_rain,medium,0.0,0.0,Meghalaya,India,1.0,NER
-6544,08/22/2014 10:30:00 PM,second hairpin bend near Varattupallam,second hairpin bend near Varattupallam,11.683,77.571,1km,other,downpour,medium,0.0,0.0,Tamil Nadu,India,1.0,SOUTH
-6015,05/08/2014 12:00:00 AM,Lohit District of Arunachal Pradesh,Lohit District of Arunachal Pradesh,27.9032,96.174,1km,mudslide,rain,medium,0.0,0.0,Arunachal Pradesh,India,1.0,NER
-7123,04/26/2015 12:00:00 AM,"Head Water Works, Kummaripalem, Vijayawada","Head Water Works, Kummaripalem, Vijayawada",16.5172,80.6024,1km,landslide,unknown,small,0.0,0.0,Andhra Pradesh,India,1.0,SOUTH
-2439,09/17/2010 09:00:00 AM,"Indrakeeladri ghat rd, Vijayawada, Andhra Pradesh","Indrakeeladri ghat rd, Vijayawada, Andhra Pradesh",16.5141,80.6055,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,1.0,SOUTH
-7263,07/22/2015 12:00:00 AM,"15 kms from Maram, National Highway-102/A (Maram Peren road)","15 kms from Maram, National Highway-102/A (Maram Peren road)",25.4477,94.0489,1km,landslide,continuous_rain,medium,0.0,0.0,Manipur,India,1.0,NER
-4424,06/20/2012 12:00:00 AM,"Lalunggaon, Guwahati,  Assam","Lalunggaon, Guwahati,  Assam",26.149,91.7351,1km,landslide,downpour,medium,,,Assam,India,1.0,NER
-5637,11/13/2013 12:00:00 AM,"Thampanoor, Thiruvananthapuram, Kerala","Thampanoor, Thiruvananthapuram, Kerala",8.4863,76.9517,1km,landslide,downpour,medium,0.0,,Kerala,India,1.0,SOUTH
-8086,06/24/2016 11:00:00 PM,"Maya Bar, Thokkottu, India","Maya Bar, Thokkottu, India",12.8157,74.8586,exact,landslide,downpour,medium,0.0,0.0,Karnataka,India,0.0,SOUTH
-9092,12/20/2015 09:00:00 AM,sanjeevinagar area,sanjeevinagar area,10.8319,78.7075,1km,landslide,unknown,medium,4.0,0.0,Tamil Nadu,India,1.0,SOUTH
-9335,05/18/2016 08:00:00 AM,"Bilaipur, Hailakandi district, Assam, India","Bilaipur, Hailakandi district, Assam, India",24.5202,92.7239,1km,landslide,continuous_rain,unknown,2.0,0.0,Assam,India,1.0,NER
-9386,05/09/2016 12:10:00 PM,".5 km away from Valparai Police Station at a construction site, Valparai, Tamil Nadu, India",".5 km away from Valparai Police Station at a construction site, Valparai, Tamil Nadu, India",10.3316,76.9592,1km,landslide,construction,small,1.0,3.0,Tamil Nadu,India,1.0,SOUTH
-5278,08/05/2013 09:30:00 AM,"Cheeyappara Waterfalls, Ernakulam, Kerala","Cheeyappara Waterfalls, Ernakulam, Kerala",10.0539,76.8298,1km,mudslide,monsoon,medium,5.0,,Kerala,India,1.0,SOUTH
-5291,08/07/2013 08:00:00 AM,Kozhipilly In Velliyamattom Village Under Thodupuzha Taluk,Kozhipilly In Velliyamattom Village Under Thodupuzha Taluk,10.0606,76.6331,1km,landslide,monsoon,medium,0.0,,Kerala,India,1.0,SOUTH
-2421,09/13/2010 09:00:00 AM,"road to Muanna Godown, Zuangtui, Mizoram","road to Muanna Godown, Zuangtui, Mizoram",23.75406693,92.74128531,1km,landslide,downpour,medium,,,Mizoram,India,1.0,NER
-6016,05/09/2014 11:00:00 PM,"Satgarakul Village, Karimganj, Assam State","Satgarakul Village, Karimganj, Assam State",24.8669,92.3576,1km,landslide,rain,small,7.0,0.0,Assam,India,1.0,NER
-6283,09/22/2014 12:00:00 AM,Dakhingaon,Dakhingaon,26.1314,91.7548,1km,landslide,rain,small,0.0,0.0,Assam,India,1.0,NER
-8930,07/11/2016 11:00:00 PM,"North Point Colony, Akuluto, Nagaland, India","North Point Colony, Akuluto, Nagaland, India",26.1699,94.4922,1km,landslide,unknown,large,0.0,0.0,Nagaland,India,1.0,NER
-8339,09/23/2015 12:00:00 AM,Kamakhya Temple,Kamakhya Temple,26.1666,91.7042,1km,landslide,continuous_rain,medium,0.0,0.0,Assam,India,1.0,NER
-9186,07/25/2016 12:30:00 PM,"Imphal-Dimapur road  in Tadubi, Senapati district, Manipur, India","Imphal-Dimapur road  in Tadubi, Senapati district, Manipur, India",25.48,94.1383,1km,landslide,continuous_rain,medium,0.0,1.0,Manipur,India,1.0,NER
-2422,09/13/2010 12:00:00 AM,"Hunthar Veng, Mizoram","Hunthar Veng, Mizoram",23.74182634,92.7141905,1km,landslide,downpour,medium,,,Mizoram,India,1.0,NER
-4990,06/27/2013 11:00:00 PM,"Near Changu Lake, 15Km Away From Nathu La, On India-China Border In Eastern Sikkim","Near Changu Lake, 15Km Away From Nathu La, On India-China Border In Eastern Sikkim",27.3765,88.7628,1km,landslide,downpour,medium,0.0,,Sikkim,India,1.0,NER
-3965,09/06/2011 08:00:00 AM,NH 37 at Awang Khul ,NH 37 at Awang Khul ,24.808,93.117,1km,landslide,rain,medium,3.0,,Assam,India,1.0,NER
-9328,05/20/2016 01:10:00 AM,"Eraniel station,  Kanyakumari district, India","Eraniel station,  Kanyakumari district, India",8.2117,77.312,1km,landslide,unknown,small,0.0,0.0,Tamil Nadu,India,1.0,SOUTH
-6969,06/16/2015 06:15:00 AM,"Nakham Bazaar, Tura, Meghalaya","Nakham Bazaar, Tura, Meghalaya",25.5114,90.215,1km,landslide,downpour,medium,4.0,0.0,Meghalaya,India,1.0,NER
-1771,04/20/2010 12:00:00 AM,"Raj Bhavan Guwahati, Assam","Raj Bhavan Guwahati, Assam",26.1978,91.7665,exact,landslide,downpour,medium,0.0,,Assam,India,0.0,NER
-5399,08/25/2013 03:00:00 PM,"Borra Caves, Andhra Pradesh","Borra Caves, Andhra Pradesh",18.2807,83.0394,1km,rock_fall,other,small,0.0,,Andhra Pradesh,India,1.0,SOUTH
-8944,11/14/2015 12:00:00 AM,Padmavathy Nagar in West Velachery,Padmavathy Nagar in West Velachery,12.9746,80.2119,1km,landslide,rain,medium,0.0,0.0,Tamil Nadu,India,1.0,SOUTH
-9251,07/28/2016 11:00:00 PM,"Government Middle School (GMS) Kiphire station “B”, Kiphire, Nagaland, India","Government Middle School (GMS) Kiphire station “B”, Kiphire, Nagaland, India",25.8702,94.7844,1km,landslide,downpour,medium,0.0,0.0,Nagaland,India,1.0,NER
-9404,05/01/2016 12:00:00 AM,"Hayuliang, Anjaw district,Arunachal Pradesh, India","Hayuliang, Anjaw district,Arunachal Pradesh, India",28.0822,96.5316,1km,landslide,downpour,medium,0.0,0.0,Arunachal Pradesh,India,1.0,NER
-2590,10/11/2010 12:00:00 AM,"ghat road of the Kanaka Durga temple, Vijayawada district","ghat road of the Kanaka Durga temple, Vijayawada district",16.5141,80.6058,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,1.0,SOUTH
-4984,06/25/2013 12:00:00 AM,"Gudalur Town, Nilgiris, Tamil Nadu","Gudalur Town, Nilgiris, Tamil Nadu",11.4991,76.4949,1km,landslide,downpour,small,0.0,,Tamil Nadu,India,1.0,SOUTH
-7933,09/01/2015 12:00:00 AM,Maligaon,Maligaon,26.1868,91.6739,1km,rock_fall,rain,medium,2.0,0.0,Assam,India,1.0,NER
-5277,08/05/2013 05:30:00 AM,"Cheeyapara Near Neriyamangalam, Kerala","Cheeyapara Near Neriyamangalam, Kerala",10.0539,76.8294,1km,mudslide,monsoon,small,0.0,,Kerala,India,1.0,SOUTH
-6110,06/27/2014 12:00:00 AM,"Bhangagarh, Assam","Bhangagarh, Assam",26.1619,91.7697,exact,landslide,rain,small,3.0,0.0,Assam,India,0.0,NER
-1172,09/19/2009 12:00:00 AM,"Nilambur, Malappuram, Kerala State","Nilambur, Malappuram, Kerala State",11.2695,76.2227,1km,landslide,downpour,medium,,,Kerala,India,1.0,SOUTH
-9142,06/14/2016 08:00:00 AM,"lower Majakong Ward, Mokokchung, Nagaland, India","lower Majakong Ward, Mokokchung, Nagaland, India",26.3185,94.5247,1km,landslide,continuous_rain,medium,0.0,0.0,Nagaland,India,1.0,NER
-7994,09/07/2015 12:00:00 AM,"Manjakuttai, Tamil Nadu, India","Manjakuttai, Tamil Nadu, India",11.81,78.2253,1km,landslide,unknown,medium,2.0,0.0,Tamil Nadu,India,1.0,SOUTH
-6237,10/09/2014 12:00:00 AM,Carmel School in Palakkayam,Carmel School in Palakkayam,10.9654,76.5516,1km,debris_flow,flooding,medium,0.0,0.0,Kerala,India,1.0,SOUTH
-8893,10/31/2015 12:00:00 AM,Arthanareeswarar Temple,Arthanareeswarar Temple,11.3742,77.899,exact,landslide,downpour,small,0.0,0.0,Tamil Nadu,India,0.0,SOUTH
-2368,08/31/2010 09:00:00 AM,"Brahmananda Reddy Nagar(?), Machavaram, Vijayawada city, Andhra Pradesh","Brahmananda Reddy Nagar(?), Machavaram, Vijayawada city, Andhra Pradesh",16.5157,80.6525,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,1.0,SOUTH
-2338,08/26/2010 09:00:00 AM,"ghat road leading to Sri Kanakadurga(Kanaka Durga) temple, Indrakeeladri hill, Vijayawada city, Andhra Pradesh","ghat road leading to Sri Kanakadurga(Kanaka Durga) temple, Indrakeeladri hill, Vijayawada city, Andhra Pradesh",16.5141,80.6053,1km,complex,downpour,medium,0.0,,Andhra Pradesh,India,1.0,SOUTH
-1756,04/17/2010 12:00:00 AM,"Nam Nang, Gangtok","Nam Nang, Gangtok",27.322,88.6087,1km,landslide,downpour,small,0.0,,Sikkim,India,1.0,NER
-9334,05/18/2016 08:00:00 AM,"Bilaipur, Hailakandi district, Assam, India","Bilaipur, Hailakandi district, Assam, India",24.5204,92.7264,1km,landslide,continuous_rain,unknown,2.0,0.0,Assam,India,1.0,NER
-8237,07/01/2016 12:00:00 AM,"Old Inspection Bungalow, Bhalukpong town, West Kameng, Arunachal Pradesh, India","Old Inspection Bungalow, Bhalukpong town, West Kameng, Arunachal Pradesh, India",27.0136,92.6351,1km,landslide,downpour,large,5.0,3.0,Arunachal Pradesh,India,1.0,NER
-3805,07/19/2011 12:00:00 AM,200 meters from Teesta Bridge towards Siliguri,200 meters from Teesta Bridge towards Siliguri,27.05374234,88.42572376,1km,landslide,rain,medium,0.0,,Sikkim,India,1.0,NER
-8988,12/07/2015 12:00:00 AM,Upper Kodaikanal Road,Upper Kodaikanal Road,10.2288,77.4767,1km,landslide,rain,medium,0.0,0.0,Tamil Nadu,India,1.0,SOUTH
-9178,07/23/2016 11:00:00 PM,"road leading to Patala Ganga and the ropeway in Srisailam, Andhra Pradesh, India","road leading to Patala Ganga and the ropeway in Srisailam, Andhra Pradesh, India",16.0781,78.8743,1km,rock_fall,downpour,medium,0.0,0.0,Andhra Pradesh,India,1.0,SOUTH
-8996,07/14/2016 12:00:00 AM,"Pub Sarania hill, South Sarania, Guwahati, Assam, India","Pub Sarania hill, South Sarania, Guwahati, Assam, India",26.1768,91.7702,1km,landslide,monsoon,small,1.0,0.0,Assam,India,1.0,NER
-4484,08/17/2012 12:00:00 AM,"(Thalanadu - Teekoy hwy), Erattupetta, Kottayam (Thalanadu - Teekoy hwy)","(Thalanadu - Teekoy hwy), Erattupetta, Kottayam (Thalanadu - Teekoy hwy)",9.6991,76.8168,1km,landslide,downpour,medium,,,Kerala,India,1.0,SOUTH
-4592,10/22/2012 09:00:00 AM,"(between Burliar and Kallar) Nilgiris, Tamil Nadu,","(between Burliar and Kallar) Nilgiris, Tamil Nadu,",10.077,76.322,1km,landslide,rain,medium,,,Kerala,India,1.0,SOUTH
-6945,06/19/2015 12:00:00 AM,"amei to Kangpokpi via Imphal road, 0.5 km from Tamei, Tamenglang District","amei to Kangpokpi via Imphal road, 0.5 km from Tamei, Tamenglang District",25.16,93.686,1km,landslide,monsoon,medium,0.0,0.0,Manipur,India,1.0,NER
-1770,04/20/2010 12:00:00 AM,"Kharghuli, Guwahati, Assam","Kharghuli, Guwahati, Assam",26.1965,91.763,1km,landslide,downpour,medium,0.0,,Assam,India,1.0,NER
-7198,07/14/2015 12:00:00 AM,Farangipete,Farangipete,12.8747,74.9566,1km,landslide,continuous_rain,small,3.0,0.0,Karnataka,India,1.0,SOUTH
-7950,09/06/2015 07:10:00 AM,"Ooty, India","Ooty, India",11.404,76.6952,1km,rock_fall,unknown,medium,0.0,0.0,Tamil Nadu,India,1.0,SOUTH
-9232,07/28/2016 11:00:00 PM,"Ngur, near Mizoram-Myanmar border, India","Ngur, near Mizoram-Myanmar border, India",23.5397,93.3783,1km,landslide,continuous_rain,medium,2.0,6.0,Mizoram,India,1.0,NER
-4434,06/25/2012 06:00:00 PM,"Sonaighuli area near Kahilipara, Guwahati City, Assam","Sonaighuli area near Kahilipara, Guwahati City, Assam",26.1049,91.7369,1km,landslide,downpour,large,1.0,,Assam,India,1.0,NER
-2423,09/13/2010 12:00:00 AM,"road to Kanan Veng from Hunthar Veng, Mizoram","road to Kanan Veng from Hunthar Veng, Mizoram",23.73504471,92.71060943,1km,landslide,downpour,medium,,,Mizoram,India,1.0,NER
-9638,10/17/2016 07:00:00 AM,Ferozeguda,Ferozeguda,17.4655,78.4606,1km,mudslide,construction,medium,1.0,3.0,Telangana,India,1.0,SOUTH
-7956,09/05/2015 12:00:00 AM,Byrnihat,Byrnihat,26.048,91.8695,1km,landslide,unknown,medium,0.0,0.0,Meghalaya,India,1.0,NER
-6970,06/16/2015 12:00:00 AM,Akonggre,Akonggre,25.5084,90.2191,1km,rock_fall,downpour,small,1.0,0.0,Meghalaya,India,1.0,NER
-8571,10/02/2015 12:00:00 AM,"Simhagiri Colony, Azeemabad, Pedagantyada, Visakhapatnam, Andhra Pradesh, India","Simhagiri Colony, Azeemabad, Pedagantyada, Visakhapatnam, Andhra Pradesh, India",17.6874,83.1993,1km,landslide,downpour,medium,2.0,0.0,Andhra Pradesh,India,1.0,SOUTH
-4015,10/15/2011 12:00:00 AM,"Palani, Dindigul district","Palani, Dindigul district",10.4497,77.5206,1km,landslide,downpour,medium,0.0,,Tamil Nadu,India,1.0,SOUTH
-1156,09/12/2009 12:00:00 AM,"Vamanapuram, Thiruvananthapuram district in the state of Kerala","Vamanapuram, Thiruvananthapuram district in the state of Kerala",8.742,76.8902,1km,landslide,rain,medium,1.0,,Kerala,India,1.0,SOUTH
-4480,08/17/2012 12:00:00 AM,"Kadavoor, Erakulam, Kerala","Kadavoor, Erakulam, Kerala",10.0011,76.7416,1km,landslide,downpour,medium,6.0,,Kerala,India,1.0,SOUTH
-2205,08/06/2010 12:00:00 AM,"Dawrpui Vengthar cemetary, Aizwal, Mizoram","Dawrpui Vengthar cemetary, Aizwal, Mizoram",23.7365,92.7146,1km,landslide,downpour,medium,0.0,,Mizoram,India,1.0,NER
-7127,04/22/2015 04:00:00 PM,under the third and fourth Padil-Bajal under-bridge railway tracks,under the third and fourth Padil-Bajal under-bridge railway tracks,12.8659,74.8852,1km,mudslide,downpour,small,0.0,0.0,Karnataka,India,1.0,SOUTH
-6112,06/28/2014 09:00:00 AM,"Kharghuli Hills, Assam","Kharghuli Hills, Assam",26.1964,91.7652,exact,landslide,rain,medium,0.0,0.0,Assam,India,0.0,NER
-2420,09/13/2010 12:00:00 AM,"Tuikual 'C', Aizawl, Mizoram","Tuikual 'C', Aizawl, Mizoram",23.72988966,92.71495623,1km,landslide,downpour,medium,1.0,,Mizoram,India,1.0,NER
-8864,07/07/2016 12:00:00 AM,"Blue Metal Quarry, Kondayanpatti, Madurai District, India","Blue Metal Quarry, Kondayanpatti, Madurai District, India",10.0545,78.0298,1km,rock_fall,mining,small,3.0,1.0,Tamil Nadu,India,1.0,SOUTH
-8892,10/31/2015 12:00:00 AM,Arthanareeswarar Temple,Arthanareeswarar Temple,11.374,77.8987,exact,landslide,downpour,small,0.0,0.0,Tamil Nadu,India,0.0,SOUTH
-5280,08/05/2013 08:00:00 AM,"Thadiyambadu Near Painavu, Kerala","Thadiyambadu Near Painavu, Kerala",9.879,76.9683,1km,landslide,monsoon,medium,2.0,2.0,Kerala,India,1.0,SOUTH
-9141,06/15/2016 09:00:00 AM,"Vazhavara, Idukki, Kerala, India","Vazhavara, Idukki, Kerala, India",9.7967,77.0611,1km,rock_fall,downpour,medium,2.0,1.0,Kerala,India,1.0,SOUTH
-9336,05/18/2016 08:00:00 AM,"Ramchandi , Hailakandi District, Assam, India","Ramchandi , Hailakandi District, Assam, India",24.5308,92.5121,1km,landslide,continuous_rain,small,1.0,0.0,Assam,India,1.0,NER
-9096,12/19/2015 12:00:00 AM,Thatichetlapalem,Thatichetlapalem,17.7345,83.2884,1km,landslide,downpour,medium,4.0,4.0,Andhra Pradesh,India,1.0,SOUTH
+event_id,event_date,event_title,location,latitude,longitude,location_accuracy,landslide_category,landslide_trigger,landslide_size,fatalities,injuries,state,country,region,location_accuracy_km
+7031,05/24/2015 12:00:00 AM,"Bop, Sikkim","Bop, Sikkim",27.6163,88.6586,1km,landslide,unknown,medium,0.0,0.0,Sikkim,India,NER,1.0
+9405,04/19/2016 12:00:00 AM,"Techahan Ward, Mon, Nagaland, India","Techahan Ward, Mon, Nagaland, India",26.7223,95.0243,1km,landslide,continuous_rain,medium,0.0,0.0,Nagaland,India,NER,1.0
+8012,09/06/2015 03:00:00 PM,"Umling, Meghalaya 793102, India","Umling, Meghalaya 793102, India",25.9703,91.8584,1km,landslide,unknown,medium,0.0,0.0,Meghalaya,India,NER,1.0
+2369,08/31/2010 12:00:00 AM,"Chittinagar, Vijayawada city, Andhra Pradesh","Chittinagar, Vijayawada city, Andhra Pradesh",16.5332,80.6103,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,SOUTH,1.0
+7335,08/18/2015 09:00:00 AM,Tura Civil Hospital,Tura Civil Hospital,25.5145,90.2023,1km,landslide,continuous_rain,medium,0.0,0.0,Meghalaya,India,NER,1.0
+6544,08/22/2014 10:30:00 PM,second hairpin bend near Varattupallam,second hairpin bend near Varattupallam,11.683,77.571,1km,other,downpour,medium,0.0,0.0,Tamil Nadu,India,SOUTH,1.0
+6015,05/08/2014 12:00:00 AM,Lohit District of Arunachal Pradesh,Lohit District of Arunachal Pradesh,27.9032,96.174,1km,mudslide,rain,medium,0.0,0.0,Arunachal Pradesh,India,NER,1.0
+7123,04/26/2015 12:00:00 AM,"Head Water Works, Kummaripalem, Vijayawada","Head Water Works, Kummaripalem, Vijayawada",16.5172,80.6024,1km,landslide,unknown,small,0.0,0.0,Andhra Pradesh,India,SOUTH,1.0
+2439,09/17/2010 09:00:00 AM,"Indrakeeladri ghat rd, Vijayawada, Andhra Pradesh","Indrakeeladri ghat rd, Vijayawada, Andhra Pradesh",16.5141,80.6055,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,SOUTH,1.0
+7263,07/22/2015 12:00:00 AM,"15 kms from Maram, National Highway-102/A (Maram Peren road)","15 kms from Maram, National Highway-102/A (Maram Peren road)",25.4477,94.0489,1km,landslide,continuous_rain,medium,0.0,0.0,Manipur,India,NER,1.0
+4424,06/20/2012 12:00:00 AM,"Lalunggaon, Guwahati,  Assam","Lalunggaon, Guwahati,  Assam",26.149,91.7351,1km,landslide,downpour,medium,,,Assam,India,NER,1.0
+5637,11/13/2013 12:00:00 AM,"Thampanoor, Thiruvananthapuram, Kerala","Thampanoor, Thiruvananthapuram, Kerala",8.4863,76.9517,1km,landslide,downpour,medium,0.0,,Kerala,India,SOUTH,1.0
+8086,06/24/2016 11:00:00 PM,"Maya Bar, Thokkottu, India","Maya Bar, Thokkottu, India",12.8157,74.8586,exact,landslide,downpour,medium,0.0,0.0,Karnataka,India,SOUTH,0.0
+9092,12/20/2015 09:00:00 AM,sanjeevinagar area,sanjeevinagar area,10.8319,78.7075,1km,landslide,unknown,medium,4.0,0.0,Tamil Nadu,India,SOUTH,1.0
+9335,05/18/2016 08:00:00 AM,"Bilaipur, Hailakandi district, Assam, India","Bilaipur, Hailakandi district, Assam, India",24.5202,92.7239,1km,landslide,continuous_rain,unknown,2.0,0.0,Assam,India,NER,1.0
+9386,05/09/2016 12:10:00 PM,".5 km away from Valparai Police Station at a construction site, Valparai, Tamil Nadu, India",".5 km away from Valparai Police Station at a construction site, Valparai, Tamil Nadu, India",10.3316,76.9592,1km,landslide,construction,small,1.0,3.0,Tamil Nadu,India,SOUTH,1.0
+5278,08/05/2013 09:30:00 AM,"Cheeyappara Waterfalls, Ernakulam, Kerala","Cheeyappara Waterfalls, Ernakulam, Kerala",10.0539,76.8298,1km,mudslide,monsoon,medium,5.0,,Kerala,India,SOUTH,1.0
+5291,08/07/2013 08:00:00 AM,Kozhipilly In Velliyamattom Village Under Thodupuzha Taluk,Kozhipilly In Velliyamattom Village Under Thodupuzha Taluk,10.0606,76.6331,1km,landslide,monsoon,medium,0.0,,Kerala,India,SOUTH,1.0
+2421,09/13/2010 09:00:00 AM,"road to Muanna Godown, Zuangtui, Mizoram","road to Muanna Godown, Zuangtui, Mizoram",23.75406693,92.74128531,1km,landslide,downpour,medium,,,Mizoram,India,NER,1.0
+6016,05/09/2014 11:00:00 PM,"Satgarakul Village, Karimganj, Assam State","Satgarakul Village, Karimganj, Assam State",24.8669,92.3576,1km,landslide,rain,small,7.0,0.0,Assam,India,NER,1.0
+6283,09/22/2014 12:00:00 AM,Dakhingaon,Dakhingaon,26.1314,91.7548,1km,landslide,rain,small,0.0,0.0,Assam,India,NER,1.0
+8930,07/11/2016 11:00:00 PM,"North Point Colony, Akuluto, Nagaland, India","North Point Colony, Akuluto, Nagaland, India",26.1699,94.4922,1km,landslide,unknown,large,0.0,0.0,Nagaland,India,NER,1.0
+8339,09/23/2015 12:00:00 AM,Kamakhya Temple,Kamakhya Temple,26.1666,91.7042,1km,landslide,continuous_rain,medium,0.0,0.0,Assam,India,NER,1.0
+9186,07/25/2016 12:30:00 PM,"Imphal-Dimapur road  in Tadubi, Senapati district, Manipur, India","Imphal-Dimapur road  in Tadubi, Senapati district, Manipur, India",25.48,94.1383,1km,landslide,continuous_rain,medium,0.0,1.0,Manipur,India,NER,1.0
+2422,09/13/2010 12:00:00 AM,"Hunthar Veng, Mizoram","Hunthar Veng, Mizoram",23.74182634,92.7141905,1km,landslide,downpour,medium,,,Mizoram,India,NER,1.0
+4990,06/27/2013 11:00:00 PM,"Near Changu Lake, 15Km Away From Nathu La, On India-China Border In Eastern Sikkim","Near Changu Lake, 15Km Away From Nathu La, On India-China Border In Eastern Sikkim",27.3765,88.7628,1km,landslide,downpour,medium,0.0,,Sikkim,India,NER,1.0
+3965,09/06/2011 08:00:00 AM,NH 37 at Awang Khul ,NH 37 at Awang Khul ,24.808,93.117,1km,landslide,rain,medium,3.0,,Assam,India,NER,1.0
+9328,05/20/2016 01:10:00 AM,"Eraniel station,  Kanyakumari district, India","Eraniel station,  Kanyakumari district, India",8.2117,77.312,1km,landslide,unknown,small,0.0,0.0,Tamil Nadu,India,SOUTH,1.0
+6969,06/16/2015 06:15:00 AM,"Nakham Bazaar, Tura, Meghalaya","Nakham Bazaar, Tura, Meghalaya",25.5114,90.215,1km,landslide,downpour,medium,4.0,0.0,Meghalaya,India,NER,1.0
+1771,04/20/2010 12:00:00 AM,"Raj Bhavan Guwahati, Assam","Raj Bhavan Guwahati, Assam",26.1978,91.7665,exact,landslide,downpour,medium,0.0,,Assam,India,NER,0.0
+5399,08/25/2013 03:00:00 PM,"Borra Caves, Andhra Pradesh","Borra Caves, Andhra Pradesh",18.2807,83.0394,1km,rock_fall,other,small,0.0,,Andhra Pradesh,India,SOUTH,1.0
+8944,11/14/2015 12:00:00 AM,Padmavathy Nagar in West Velachery,Padmavathy Nagar in West Velachery,12.9746,80.2119,1km,landslide,rain,medium,0.0,0.0,Tamil Nadu,India,SOUTH,1.0
+9251,07/28/2016 11:00:00 PM,"Government Middle School (GMS) Kiphire station “B”, Kiphire, Nagaland, India","Government Middle School (GMS) Kiphire station “B”, Kiphire, Nagaland, India",25.8702,94.7844,1km,landslide,downpour,medium,0.0,0.0,Nagaland,India,NER,1.0
+9404,05/01/2016 12:00:00 AM,"Hayuliang, Anjaw district,Arunachal Pradesh, India","Hayuliang, Anjaw district,Arunachal Pradesh, India",28.0822,96.5316,1km,landslide,downpour,medium,0.0,0.0,Arunachal Pradesh,India,NER,1.0
+2590,10/11/2010 12:00:00 AM,"ghat road of the Kanaka Durga temple, Vijayawada district","ghat road of the Kanaka Durga temple, Vijayawada district",16.5141,80.6058,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,SOUTH,1.0
+4984,06/25/2013 12:00:00 AM,"Gudalur Town, Nilgiris, Tamil Nadu","Gudalur Town, Nilgiris, Tamil Nadu",11.4991,76.4949,1km,landslide,downpour,small,0.0,,Tamil Nadu,India,SOUTH,1.0
+7933,09/01/2015 12:00:00 AM,Maligaon,Maligaon,26.1868,91.6739,1km,rock_fall,rain,medium,2.0,0.0,Assam,India,NER,1.0
+5277,08/05/2013 05:30:00 AM,"Cheeyapara Near Neriyamangalam, Kerala","Cheeyapara Near Neriyamangalam, Kerala",10.0539,76.8294,1km,mudslide,monsoon,small,0.0,,Kerala,India,SOUTH,1.0
+6110,06/27/2014 12:00:00 AM,"Bhangagarh, Assam","Bhangagarh, Assam",26.1619,91.7697,exact,landslide,rain,small,3.0,0.0,Assam,India,NER,0.0
+1172,09/19/2009 12:00:00 AM,"Nilambur, Malappuram, Kerala State","Nilambur, Malappuram, Kerala State",11.2695,76.2227,1km,landslide,downpour,medium,,,Kerala,India,SOUTH,1.0
+9142,06/14/2016 08:00:00 AM,"lower Majakong Ward, Mokokchung, Nagaland, India","lower Majakong Ward, Mokokchung, Nagaland, India",26.3185,94.5247,1km,landslide,continuous_rain,medium,0.0,0.0,Nagaland,India,NER,1.0
+7994,09/07/2015 12:00:00 AM,"Manjakuttai, Tamil Nadu, India","Manjakuttai, Tamil Nadu, India",11.81,78.2253,1km,landslide,unknown,medium,2.0,0.0,Tamil Nadu,India,SOUTH,1.0
+6237,10/09/2014 12:00:00 AM,Carmel School in Palakkayam,Carmel School in Palakkayam,10.9654,76.5516,1km,debris_flow,flooding,medium,0.0,0.0,Kerala,India,SOUTH,1.0
+8893,10/31/2015 12:00:00 AM,Arthanareeswarar Temple,Arthanareeswarar Temple,11.3742,77.899,exact,landslide,downpour,small,0.0,0.0,Tamil Nadu,India,SOUTH,0.0
+2368,08/31/2010 09:00:00 AM,"Brahmananda Reddy Nagar(?), Machavaram, Vijayawada city, Andhra Pradesh","Brahmananda Reddy Nagar(?), Machavaram, Vijayawada city, Andhra Pradesh",16.5157,80.6525,1km,landslide,downpour,medium,0.0,,Andhra Pradesh,India,SOUTH,1.0
+2338,08/26/2010 09:00:00 AM,"ghat road leading to Sri Kanakadurga(Kanaka Durga) temple, Indrakeeladri hill, Vijayawada city, Andhra Pradesh","ghat road leading to Sri Kanakadurga(Kanaka Durga) temple, Indrakeeladri hill, Vijayawada city, Andhra Pradesh",16.5141,80.6053,1km,complex,downpour,medium,0.0,,Andhra Pradesh,India,SOUTH,1.0
+1756,04/17/2010 12:00:00 AM,"Nam Nang, Gangtok","Nam Nang, Gangtok",27.322,88.6087,1km,landslide,downpour,small,0.0,,Sikkim,India,NER,1.0
+9334,05/18/2016 08:00:00 AM,"Bilaipur, Hailakandi district, Assam, India","Bilaipur, Hailakandi district, Assam, India",24.5204,92.7264,1km,landslide,continuous_rain,unknown,2.0,0.0,Assam,India,NER,1.0
+8237,07/01/2016 12:00:00 AM,"Old Inspection Bungalow, Bhalukpong town, West Kameng, Arunachal Pradesh, India","Old Inspection Bungalow, Bhalukpong town, West Kameng, Arunachal Pradesh, India",27.0136,92.6351,1km,landslide,downpour,large,5.0,3.0,Arunachal Pradesh,India,NER,1.0
+3805,07/19/2011 12:00:00 AM,200 meters from Teesta Bridge towards Siliguri,200 meters from Teesta Bridge towards Siliguri,27.05374234,88.42572376,1km,landslide,rain,medium,0.0,,Sikkim,India,NER,1.0
+8988,12/07/2015 12:00:00 AM,Upper Kodaikanal Road,Upper Kodaikanal Road,10.2288,77.4767,1km,landslide,rain,medium,0.0,0.0,Tamil Nadu,India,SOUTH,1.0
+9178,07/23/2016 11:00:00 PM,"road leading to Patala Ganga and the ropeway in Srisailam, Andhra Pradesh, India","road leading to Patala Ganga and the ropeway in Srisailam, Andhra Pradesh, India",16.0781,78.8743,1km,rock_fall,downpour,medium,0.0,0.0,Andhra Pradesh,India,SOUTH,1.0
+8996,07/14/2016 12:00:00 AM,"Pub Sarania hill, South Sarania, Guwahati, Assam, India","Pub Sarania hill, South Sarania, Guwahati, Assam, India",26.1768,91.7702,1km,landslide,monsoon,small,1.0,0.0,Assam,India,NER,1.0
+4484,08/17/2012 12:00:00 AM,"(Thalanadu - Teekoy hwy), Erattupetta, Kottayam (Thalanadu - Teekoy hwy)","(Thalanadu - Teekoy hwy), Erattupetta, Kottayam (Thalanadu - Teekoy hwy)",9.6991,76.8168,1km,landslide,downpour,medium,,,Kerala,India,SOUTH,1.0
+4592,10/22/2012 09:00:00 AM,"(between Burliar and Kallar) Nilgiris, Tamil Nadu,","(between Burliar and Kallar) Nilgiris, Tamil Nadu,",10.077,76.322,1km,landslide,rain,medium,,,Kerala,India,SOUTH,1.0
+6945,06/19/2015 12:00:00 AM,"amei to Kangpokpi via Imphal road, 0.5 km from Tamei, Tamenglang District","amei to Kangpokpi via Imphal road, 0.5 km from Tamei, Tamenglang District",25.16,93.686,1km,landslide,monsoon,medium,0.0,0.0,Manipur,India,NER,1.0
+1770,04/20/2010 12:00:00 AM,"Kharghuli, Guwahati, Assam","Kharghuli, Guwahati, Assam",26.1965,91.763,1km,landslide,downpour,medium,0.0,,Assam,India,NER,1.0
+7198,07/14/2015 12:00:00 AM,Farangipete,Farangipete,12.8747,74.9566,1km,landslide,continuous_rain,small,3.0,0.0,Karnataka,India,SOUTH,1.0
+7950,09/06/2015 07:10:00 AM,"Ooty, India","Ooty, India",11.404,76.6952,1km,rock_fall,unknown,medium,0.0,0.0,Tamil Nadu,India,SOUTH,1.0
+9232,07/28/2016 11:00:00 PM,"Ngur, near Mizoram-Myanmar border, India","Ngur, near Mizoram-Myanmar border, India",23.5397,93.3783,1km,landslide,continuous_rain,medium,2.0,6.0,Mizoram,India,NER,1.0
+4434,06/25/2012 06:00:00 PM,"Sonaighuli area near Kahilipara, Guwahati City, Assam","Sonaighuli area near Kahilipara, Guwahati City, Assam",26.1049,91.7369,1km,landslide,downpour,large,1.0,,Assam,India,NER,1.0
+2423,09/13/2010 12:00:00 AM,"road to Kanan Veng from Hunthar Veng, Mizoram","road to Kanan Veng from Hunthar Veng, Mizoram",23.73504471,92.71060943,1km,landslide,downpour,medium,,,Mizoram,India,NER,1.0
+9638,10/17/2016 07:00:00 AM,Ferozeguda,Ferozeguda,17.4655,78.4606,1km,mudslide,construction,medium,1.0,3.0,Telangana,India,SOUTH,1.0
+7956,09/05/2015 12:00:00 AM,Byrnihat,Byrnihat,26.048,91.8695,1km,landslide,unknown,medium,0.0,0.0,Meghalaya,India,NER,1.0
+6970,06/16/2015 12:00:00 AM,Akonggre,Akonggre,25.5084,90.2191,1km,rock_fall,downpour,small,1.0,0.0,Meghalaya,India,NER,1.0
+8571,10/02/2015 12:00:00 AM,"Simhagiri Colony, Azeemabad, Pedagantyada, Visakhapatnam, Andhra Pradesh, India","Simhagiri Colony, Azeemabad, Pedagantyada, Visakhapatnam, Andhra Pradesh, India",17.6874,83.1993,1km,landslide,downpour,medium,2.0,0.0,Andhra Pradesh,India,SOUTH,1.0
+4015,10/15/2011 12:00:00 AM,"Palani, Dindigul district","Palani, Dindigul district",10.4497,77.5206,1km,landslide,downpour,medium,0.0,,Tamil Nadu,India,SOUTH,1.0
+1156,09/12/2009 12:00:00 AM,"Vamanapuram, Thiruvananthapuram district in the state of Kerala","Vamanapuram, Thiruvananthapuram district in the state of Kerala",8.742,76.8902,1km,landslide,rain,medium,1.0,,Kerala,India,SOUTH,1.0
+4480,08/17/2012 12:00:00 AM,"Kadavoor, Erakulam, Kerala","Kadavoor, Erakulam, Kerala",10.0011,76.7416,1km,landslide,downpour,medium,6.0,,Kerala,India,SOUTH,1.0
+2205,08/06/2010 12:00:00 AM,"Dawrpui Vengthar cemetary, Aizwal, Mizoram","Dawrpui Vengthar cemetary, Aizwal, Mizoram",23.7365,92.7146,1km,landslide,downpour,medium,0.0,,Mizoram,India,NER,1.0
+7127,04/22/2015 04:00:00 PM,under the third and fourth Padil-Bajal under-bridge railway tracks,under the third and fourth Padil-Bajal under-bridge railway tracks,12.8659,74.8852,1km,mudslide,downpour,small,0.0,0.0,Karnataka,India,SOUTH,1.0
+6112,06/28/2014 09:00:00 AM,"Kharghuli Hills, Assam","Kharghuli Hills, Assam",26.1964,91.7652,exact,landslide,rain,medium,0.0,0.0,Assam,India,NER,0.0
+2420,09/13/2010 12:00:00 AM,"Tuikual 'C', Aizawl, Mizoram","Tuikual 'C', Aizawl, Mizoram",23.72988966,92.71495623,1km,landslide,downpour,medium,1.0,,Mizoram,India,NER,1.0
+8864,07/07/2016 12:00:00 AM,"Blue Metal Quarry, Kondayanpatti, Madurai District, India","Blue Metal Quarry, Kondayanpatti, Madurai District, India",10.0545,78.0298,1km,rock_fall,mining,small,3.0,1.0,Tamil Nadu,India,SOUTH,1.0
+8892,10/31/2015 12:00:00 AM,Arthanareeswarar Temple,Arthanareeswarar Temple,11.374,77.8987,exact,landslide,downpour,small,0.0,0.0,Tamil Nadu,India,SOUTH,0.0
+5280,08/05/2013 08:00:00 AM,"Thadiyambadu Near Painavu, Kerala","Thadiyambadu Near Painavu, Kerala",9.879,76.9683,1km,landslide,monsoon,medium,2.0,2.0,Kerala,India,SOUTH,1.0
+9141,06/15/2016 09:00:00 AM,"Vazhavara, Idukki, Kerala, India","Vazhavara, Idukki, Kerala, India",9.7967,77.0611,1km,rock_fall,downpour,medium,2.0,1.0,Kerala,India,SOUTH,1.0
+9336,05/18/2016 08:00:00 AM,"Ramchandi , Hailakandi District, Assam, India","Ramchandi , Hailakandi District, Assam, India",24.5308,92.5121,1km,landslide,continuous_rain,small,1.0,0.0,Assam,India,NER,1.0
+9096,12/19/2015 12:00:00 AM,Thatichetlapalem,Thatichetlapalem,17.7345,83.2884,1km,landslide,downpour,medium,4.0,4.0,Andhra Pradesh,India,SOUTH,1.0

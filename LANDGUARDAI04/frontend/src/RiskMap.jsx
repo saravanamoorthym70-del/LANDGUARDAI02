@@ -53,6 +53,37 @@ function MapFocusController({ location }) {
   return null;
 }
 
+function HistoricalBoundsController({ events, enabled, loading }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!enabled || loading || !events.length) return;
+
+    const points = events
+      .map((event) => [Number(event.latitude), Number(event.longitude)])
+      .filter(([latitude, longitude]) =>
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        latitude >= -90 && latitude <= 90 &&
+        longitude >= -180 && longitude <= 180
+      );
+
+    if (points.length) {
+      map.fitBounds(L.latLngBounds(points), {
+        padding: [32, 32],
+        maxZoom: 7,
+        animate: false,
+      });
+
+      if (map.getSize().x >= 600) {
+        map.setZoom(Math.min(map.getZoom() + 1, 7), { animate: false });
+      }
+    }
+  }, [enabled, events, loading, map]);
+
+  return null;
+}
+
 function MapBoundsWatcher({ onBoundsChange }) {
   const map = useMap();
 
@@ -401,7 +432,7 @@ function LiveLocationMarker({
 // MAP LEGEND
 // ============================================================
 
-function MapLegend({ historyCount, assessmentCount, historyError }) {
+function MapLegend({ historyCount, assessmentCount, historyError, showHistoricalData }) {
   return (
     <div className="map-legend">
 
@@ -409,17 +440,21 @@ function MapLegend({ historyCount, assessmentCount, historyError }) {
         Map data
       </div>
 
-      <div className="legend-item">
-        <span className="legend-dot historic" />
-        <span>{historyCount} historical events</span>
-      </div>
+      {showHistoricalData && (
+        <div className="legend-item">
+          <span className="legend-dot historic" />
+          <span>{historyCount} historical events</span>
+        </div>
+      )}
 
-      <div className="legend-item">
-        <span className="legend-dot assessment" />
-        <span>{assessmentCount} saved assessments</span>
-      </div>
+      {showHistoricalData && (
+        <div className="legend-item">
+          <span className="legend-dot assessment" />
+          <span>{assessmentCount} saved assessments</span>
+        </div>
+      )}
 
-      {historyError && (
+      {showHistoricalData && historyError && (
         <div className="legend-info">Historical catalog unavailable</div>
       )}
 
@@ -479,9 +514,11 @@ export default function RiskMap({
   apiBaseUrl,
   selectedLocation,
   focusLocation,
+  fitHistoricalEvents = false,
+  showHistoricalData = true,
 }) {
   const [historicalEvents, setHistoricalEvents] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(showHistoricalData);
   const [historyError, setHistoryError] = useState(false);
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
   const [gridEnabled, setGridEnabled] = useState(false);
@@ -514,6 +551,8 @@ export default function RiskMap({
   const [replayError, setReplayError] = useState(false);
 
   useEffect(() => {
+    if (!showHistoricalData) return undefined;
+
     let cancelled = false;
 
     async function loadHistoricalEvents() {
@@ -540,7 +579,7 @@ export default function RiskMap({
     return () => {
       cancelled = true;
     };
-  }, [apiBaseUrl, historyRefreshKey]);
+  }, [apiBaseUrl, historyRefreshKey, showHistoricalData]);
 
   useEffect(() => {
     if (!gridEnabled || !gridBounds) return undefined;
@@ -670,6 +709,11 @@ export default function RiskMap({
       >
 
         <MapFocusController location={focusLocation} />
+        <HistoricalBoundsController
+          events={historicalEvents}
+          enabled={fitHistoricalEvents && showHistoricalData}
+          loading={historyLoading}
+        />
         <MapBoundsWatcher onBoundsChange={setGridBounds} />
         <MapBoundsWatcher onBoundsChange={setExposureBounds} />
 
@@ -725,7 +769,7 @@ export default function RiskMap({
           );
         })}
 
-        {historicalEvents.map(
+        {showHistoricalData && historicalEvents.map(
             (item, index) => (
               <HistoricalMarker
                 key={
@@ -738,7 +782,7 @@ export default function RiskMap({
             )
           )}
 
-        {records.map((item, index) => (
+        {showHistoricalData && records.map((item, index) => (
           <AssessmentMarker
             key={item.id ?? item.correlation_id ?? `${item.latitude}-${item.longitude}-${index}`}
             item={item}
@@ -773,22 +817,25 @@ export default function RiskMap({
           MAP LEGEND
       ====================================================== */}
 
-      <button
-        type="button"
-        className="map-history-refresh"
-        onClick={() => setHistoryRefreshKey((key) => key + 1)}
-        disabled={historyLoading}
-        title="Refresh historical event points"
-        aria-label="Refresh historical event points"
-      >
-        <RefreshCw size={15} className={historyLoading ? "spin" : ""} />
-        <span>{historyLoading ? "Loading events" : "Refresh events"}</span>
-      </button>
+      {showHistoricalData && (
+        <button
+          type="button"
+          className="map-history-refresh"
+          onClick={() => setHistoryRefreshKey((key) => key + 1)}
+          disabled={historyLoading}
+          title="Refresh historical event points"
+          aria-label="Refresh historical event points"
+        >
+          <RefreshCw size={15} className={historyLoading ? "spin" : ""} />
+          <span>{historyLoading ? "Loading events" : "Refresh events"}</span>
+        </button>
+      )}
 
       <MapLegend
         historyCount={historicalEvents.length}
         assessmentCount={records.length}
         historyError={historyError}
+        showHistoricalData={showHistoricalData}
       />
 
       <div className="risk-grid-control">
@@ -908,7 +955,8 @@ export default function RiskMap({
         )}
       </section>
 
-      <section className="risk-replay-panel" aria-label="Historical replay">
+      {showHistoricalData && (
+        <section className="risk-replay-panel" aria-label="Historical replay">
         <div className="risk-grid-summary-heading">
           <h3>Historical replay</h3>
           {selectedLocation && (
@@ -984,7 +1032,8 @@ export default function RiskMap({
             </p>
           </>
         )}
-      </section>
+        </section>
+      )}
 
     </>
   );

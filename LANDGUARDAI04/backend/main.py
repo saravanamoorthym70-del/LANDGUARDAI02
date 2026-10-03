@@ -40,7 +40,7 @@ HISTORICAL_EVENTS_CSV = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "ml",
     "dataset",
-    "INDIA_TARGET_REGIONS_landslides.csv",
+    "INDIA_TARGET_REGIONS_MAP.csv",
 )
 
 

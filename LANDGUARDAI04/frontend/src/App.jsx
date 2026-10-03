@@ -139,6 +139,54 @@ function BrandMark({ size = 28 }) {
   );
 }
 
+function DashboardHeader({ activeView, onNavigate, systemStatus }) {
+  const items = [
+    { id: "home", label: "Dashboard" },
+    { id: "historical", label: "Historical Data" },
+    { id: "current", label: "Current Status" },
+  ];
+
+  return (
+    <header className="dashboard-header">
+      <div className="header-content">
+        <div className="brand">
+          <div className="brand-icon"><BrandMark /></div>
+          <div>
+            <h1>LANDGUARD AI</h1>
+            <p>AI-Based Landslide Risk Monitoring System</p>
+          </div>
+        </div>
+
+        <nav className="primary-nav" aria-label="Main navigation">
+          {items.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`primary-nav-link ${activeView === item.id ? "is-active" : ""}`}
+              aria-current={activeView === item.id ? "page" : undefined}
+              onClick={() => onNavigate(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="header-tools">
+          <div className={`header-status ${systemStatus === "Backend unavailable" ? "is-offline" : ""}`}>
+            <span className={`status-dot ${systemStatus === "Backend unavailable" ? "is-offline" : systemStatus === "Checking status" ? "is-checking" : ""}`} />
+            {systemStatus}
+          </div>
+          {activeView !== "home" && (
+            <button className="back-button" type="button" onClick={() => onNavigate("home")}>
+              <span aria-hidden="true">&#8592;</span> Back to Dashboard
+            </button>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
+
 // ============================================================
 // CONTOUR BACKGROUND — decorative topographic-line texture
 // used once, behind the hero panel.
@@ -210,6 +258,30 @@ function getRainfallChartData(liveRisk) {
 // ============================================================
 
 export default function App() {
+  const [activeView, setActiveView] = useState("home");
+  const [systemStatus, setSystemStatus] = useState("Checking status");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function checkSystemStatus() {
+      try {
+        const response = await fetch(`${API_BASE}/health`, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Health check failed (${response.status})`);
+        setSystemStatus("Monitoring System Online");
+      } catch (statusError) {
+        if (statusError.name !== "AbortError") setSystemStatus("Backend unavailable");
+      }
+    }
+
+    checkSystemStatus();
+    const intervalId = window.setInterval(checkSystemStatus, 30_000);
+    return () => {
+      controller.abort();
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   // ==========================================================
   // MANUAL PREDICTION FORM
   // ==========================================================
@@ -756,6 +828,86 @@ export default function App() {
   // RENDER
   // ==========================================================
 
+  if (activeView === "home") {
+    return (
+      <div className="dashboard landing-page">
+        <DashboardHeader activeView={activeView} onNavigate={setActiveView} systemStatus={systemStatus} />
+
+        <main>
+          <section className="hero-section landing-hero">
+            <ContourField />
+            <div className="hero-content">
+              <span className="landing-kicker">Environmental intelligence platform</span>
+              <h2>AI-Powered Landslide Risk Intelligence</h2>
+              <p>
+                Monitor historical landslide patterns, analyze environmental conditions,
+                and assess current landslide risk across India.
+              </p>
+            </div>
+          </section>
+
+          <section className="view-options" aria-label="Choose a dashboard view">
+            <button
+              type="button"
+              className="view-option-card historical-option"
+              onClick={() => setActiveView("historical")}
+            >
+              <span className="view-option-icon"><History size={23} /></span>
+              <span className="view-option-copy">
+                <strong>Historical Data</strong>
+                <span>Explore historical landslide events, patterns and affected regions across India.</span>
+                <span className="view-option-cta">Explore Historical Data</span>
+              </span>
+              <span className="view-option-arrow" aria-hidden="true">&#8594;</span>
+            </button>
+
+            <button
+              type="button"
+              className="view-option-card current-option"
+              onClick={() => setActiveView("current")}
+            >
+              <span className="view-option-icon"><ShieldCheck size={23} /></span>
+              <span className="view-option-copy">
+                <strong>Current Risk Status</strong>
+                <span>Analyze current environmental conditions and AI-powered landslide risk.</span>
+                <span className="view-option-cta">Check Current Risk</span>
+              </span>
+              <span className="view-option-arrow" aria-hidden="true">&#8594;</span>
+            </button>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  if (activeView === "historical") {
+    return (
+      <div className="dashboard historical-page">
+        <DashboardHeader activeView={activeView} onNavigate={setActiveView} systemStatus={systemStatus} />
+
+        <main className="main-container">
+          <section className="page-intro">
+            <span className="landing-kicker">Historical intelligence</span>
+            <h2>Historical Landslide Intelligence</h2>
+            <p>Explore historical landslide events and spatial patterns across India.</p>
+          </section>
+
+          <section className="dashboard-card historical-map-card">
+            <RiskMap
+              onLocationClick={handleMapClick}
+              liveRisk={liveRisk}
+              records={liveRecords}
+              apiBaseUrl={API_BASE}
+              selectedLocation={monitorLocation}
+              focusLocation={mapFocusLocation}
+              fitHistoricalEvents
+            />
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard">
 
@@ -763,34 +915,7 @@ export default function App() {
           HEADER
       ====================================================== */}
 
-      <header className="dashboard-header">
-
-        <div className="header-content">
-
-          <div className="brand">
-
-            <div className="brand-icon">
-              <BrandMark />
-            </div>
-
-            <div>
-              <h1>LANDGUARD AI</h1>
-
-              <p>
-                Landslide risk monitoring for the North Eastern Region
-              </p>
-            </div>
-
-          </div>
-
-          <div className="header-status">
-            <span className="status-dot" />
-            System online
-          </div>
-
-        </div>
-
-      </header>
+      <DashboardHeader activeView={activeView} onNavigate={setActiveView} systemStatus={systemStatus} />
 
       {/* ======================================================
           HERO
@@ -803,33 +928,32 @@ export default function App() {
         <div className="hero-content">
 
           <h2>
-            Landslide risk, monitored in real time
+            Current Landslide Risk
           </h2>
 
           <p>
-            LANDGUARD AI combines rainfall, soil moisture, and terrain
-            data with a trained model to flag high-risk ground across
-            NER and South India. Click anywhere on the map for an
-            instant assessment.
+            Real-time environmental conditions and AI-based risk assessment.
           </p>
 
-          <div className="hero-stats">
-
-            <div className="hero-stat">
-              <strong>494</strong>
-              <span>Historical events tracked</span>
+          <div className="current-risk-summary" aria-live="polite">
+            <div className="current-risk-reading">
+              <span>Current risk</span>
+              <strong className={liveRisk ? getRiskClass(liveRiskLevel) : "pending"}>
+                {liveRisk ? formatRiskLabel(liveRiskLevel) : "Awaiting assessment"}
+              </strong>
             </div>
-
-            <div className="hero-stat">
-              <strong>13</strong>
-              <span>States covered</span>
+            <div className="current-risk-reading">
+              <span>Model screening score</span>
+              <strong>
+                {liveRiskPercentage === undefined
+                  ? "—"
+                  : `${Number(liveRiskPercentage).toFixed(1)}%`}
+              </strong>
             </div>
-
-            <div className="hero-stat">
-              <strong>6</strong>
-              <span>Environmental signals</span>
+            <div className="current-risk-status">
+              <span className="status-dot" />
+              {liveLoading ? "Analyzing selected area" : liveRisk ? "Assessment complete" : "Ready for assessment"}
             </div>
-
           </div>
 
         </div>
@@ -912,6 +1036,7 @@ export default function App() {
             apiBaseUrl={API_BASE}
             selectedLocation={monitorLocation}
             focusLocation={mapFocusLocation}
+            showHistoricalData={false}
           />
 
         </section>

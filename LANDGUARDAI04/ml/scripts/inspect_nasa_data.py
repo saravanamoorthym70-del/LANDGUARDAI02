@@ -27,6 +27,7 @@ from ml.scripts.common import DATASET_DIR, TARGET_STATES, region_for_state
 RAW_CSV = os.path.join(DATASET_DIR, "NASA_Global_Landslide_Catalog.csv")
 INDIA_CSV = os.path.join(DATASET_DIR, "INDIA_landslides.csv")
 OUTPUT_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_landslides.csv")
+MAP_OUTPUT_CSV = os.path.join(DATASET_DIR, "INDIA_TARGET_REGIONS_MAP.csv")
 MAX_LOCATION_ACCURACY_KM = 1.0
 
 # The NASA GLC export uses these column names; we normalize to the
@@ -112,6 +113,9 @@ def main():
 
     india["state"] = india["state"].astype(str).str.strip()
     target = india[india["state"].isin(TARGET_STATES)].copy()
+    target["region"] = target["state"].apply(region_for_state)
+    target.to_csv(MAP_OUTPUT_CSV, index=False)
+
     target, accuracy_summary = filter_accurate_events(target)
     if accuracy_summary["available"]:
         print(
@@ -125,11 +129,10 @@ def main():
             "Location accuracy unavailable; no events were filtered. "
             "Available event columns: " + ", ".join(target.columns)
         )
-    target["region"] = target["state"].apply(region_for_state)
-
     target.to_csv(OUTPUT_CSV, index=False)
 
     print(f"Target regions → {len(target)} records")
+    print(f"Full map catalog → {MAP_OUTPUT_CSV}")
     print(target["region"].value_counts().to_string())
     print(f"\nWrote {OUTPUT_CSV}")
 

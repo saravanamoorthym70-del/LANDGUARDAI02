@@ -57,11 +57,13 @@ python -m ml.scripts.train_real_model
 ```
 
 Each script picks up where the previous one left off and prints progress
-and row counts. The current local catalog has 390 target-region events
-before accuracy filtering; the inventory stage retains only events
-reported as `exact` or <=1 km uncertainty. The current table has 79 such
-events and 649 complete-feature background rows. Counts may change when
-the source files are refreshed.
+and row counts. The full target-region catalog is also written to
+`INDIA_TARGET_REGIONS_MAP.csv` for the historical map, retaining all 390
+events before accuracy filtering. The ML inventory
+`INDIA_TARGET_REGIONS_landslides.csv` retains only events reported as
+`exact` or <=1 km uncertainty; the current table has 79 such events and
+649 complete-feature background rows. Counts may change when the source
+files are refreshed.
 
 For optional Northeast reporting-bias diagnostics, after building the
 combined table run `enrich_osm_context.py` with the downloaded Northeast and
